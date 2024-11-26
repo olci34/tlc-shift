@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
-import NavLinkItem from './nav-link-item';
 import { useRouter } from 'next/router';
+import NavLinkItem from './nav-link-item';
 
 const NavBar = () => {
   const router = useRouter();

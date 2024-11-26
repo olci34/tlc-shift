@@ -1,5 +1,5 @@
 'use client';
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import L, { GeoJSON } from 'leaflet';
 import { MapContainer, TileLayer, GeoJSON as LeafletGeoJSON } from 'react-leaflet';
 import { GeoJsonObject } from 'geojson';
@@ -15,6 +15,14 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
   const clickedLayerRef = useRef<L.Layer | null>(null);
   const geojsonRef = useRef<GeoJSON | null>(null);
   const [mapReady, setMapReady] = useState<boolean>(false);
+  console.log('Map Rendered');
+  // Update GeoJSON data when geoData prop changes
+  useEffect(() => {
+    if (geojsonRef.current && geoData) {
+      geojsonRef.current.clearLayers(); // Remove the existing layers
+      geojsonRef.current.addData(geoData); // Add the new GeoJSON data
+    }
+  }, [geoData]);
 
   const getColor = (density: number) => {
     return density > 100
