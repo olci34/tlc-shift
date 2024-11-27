@@ -20,15 +20,14 @@ const Map = dynamic(() => import('../components/geomap/geomap'), { ssr: false })
 
 export default function Home() {
   const dateFormat = 'YYYY-MM-DD';
-  const start = moment().set('year', 2023).subtract(1, 'month');
-  const end = moment().set('year', 2023);
+  const last_year_today = moment().set('year', 2023);
 
   const startDateRef = useRef<HTMLInputElement>(null);
   const endDateRef = useRef<HTMLInputElement>(null);
 
   const [geoData, setGeoData] = useState<GeoJsonObject>();
-  const [startDate, setStartDate] = useState<string>(start.format(dateFormat));
-  const [endDate, setEndDate] = useState<string>(end.format(dateFormat));
+  const [startDate, setStartDate] = useState<string>(last_year_today.format(dateFormat));
+  const [endDate, setEndDate] = useState<string>(last_year_today.format(dateFormat));
   const [startTime, setStartTime] = useState<number>(12);
   const [endTime, setEndTime] = useState<number>(16);
 
@@ -73,8 +72,8 @@ export default function Home() {
           max={24}
           step={1}
           onChangeEnd={([t1, t2]) => {
-            setStartTime(t1);
             setEndTime(t2);
+            setStartTime(t1);
           }}
         >
           <RangeSliderMark
