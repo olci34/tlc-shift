@@ -15,7 +15,6 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
   const clickedLayerRef = useRef<L.Layer | null>(null);
   const geojsonRef = useRef<GeoJSON | null>(null);
   const [mapReady, setMapReady] = useState<boolean>(false);
-  console.log('Map Rendered');
   // Update GeoJSON data when geoData prop changes
   useEffect(() => {
     if (geojsonRef.current && geoData) {
@@ -25,13 +24,13 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
   }, [geoData]);
 
   const getColor = (density: number) => {
-    return density > 100
+    return density > 10000
       ? '#800026'
-      : density > 50
+      : density > 5000
         ? '#BD0026'
-        : density > 20
+        : density > 2000
           ? '#E31A1C'
-          : density > 10
+          : density > 1000
             ? '#FC4E2A'
             : '#FFEDA0';
   };
