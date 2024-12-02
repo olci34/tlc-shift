@@ -22,7 +22,7 @@ import {
 import moment from 'moment';
 import { FeatureCollection } from 'geojson';
 import dynamic from 'next/dynamic';
-import getTrips from '@/api/getTrips';
+import getTripDensity from '@/api/getTripDensity';
 import DateFormInput from '@/components/form/date-form-input';
 import { debounce } from 'lodash';
 const GeoMap = dynamic(() => import('../components/geomap/geomap'), { ssr: false });
@@ -62,14 +62,14 @@ export default function Home() {
       const dateFormat = 'YYYY-MM-DDTHH:mm:ss';
       const s = moment(startDate).set('hour', startTime);
       const e = moment(endDate).set('hour', endTime);
-      const resp = await getTrips(s.format(dateFormat), e.format(dateFormat));
+      const resp = await getTripDensity(s.format(dateFormat), e.format(dateFormat));
 
       if (resp) {
         const density = new Map<number, number>();
         resp.forEach((data) => density.set(data.location_id, data.density));
         setTripDenstiy(density);
       }
-    }, 3000);
+    }, 300);
 
     fetchTrips();
 

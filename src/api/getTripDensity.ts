@@ -5,7 +5,7 @@ export type TripDensityResponse = {
   density: number;
 };
 
-const getTrips = async (startDatetime: string, endDatetime: string) => {
+const getTripDensity = async (startDatetime: string, endDatetime: string) => {
   const tripsURL = 'http://localhost:8000/trips';
   const query = `startDate=${startDatetime}&endDate=${endDatetime}`;
 
@@ -17,4 +17,4 @@ const getTrips = async (startDatetime: string, endDatetime: string) => {
   }
 };
 
-export default getTrips;
+export default getTripDensity;
