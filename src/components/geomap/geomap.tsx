@@ -2,26 +2,41 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import L, { GeoJSON } from 'leaflet';
 import { MapContainer, TileLayer, GeoJSON as LeafletGeoJSON } from 'react-leaflet';
-import { GeoJsonObject } from 'geojson';
+import { FeatureCollection } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 import { Box, Skeleton, Text } from '@chakra-ui/react';
 
 interface GeoMapProps {
-  geoData?: GeoJsonObject;
+  geoData?: FeatureCollection;
+  tripDensity?: Map<number, number>;
 }
 
-const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
+const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity }) => {
   const position: L.LatLngExpression = [40.7831, -73.9712];
+  const tripDensityRef = useRef(tripDensity);
   const clickedLayerRef = useRef<L.Layer | null>(null);
   const geojsonRef = useRef<GeoJSON | null>(null);
   const [mapReady, setMapReady] = useState<boolean>(false);
-  // Update GeoJSON data when geoData prop changes
+
   useEffect(() => {
     if (geojsonRef.current && geoData) {
-      geojsonRef.current.clearLayers(); // Remove the existing layers
-      geojsonRef.current.addData(geoData); // Add the new GeoJSON data
+      geojsonRef.current.clearLayers();
+      geojsonRef.current.addData(geoData);
     }
   }, [geoData]);
+
+  useEffect(() => {
+    if (geojsonRef.current && tripDensity) {
+      tripDensityRef.current = tripDensity;
+
+      geojsonRef.current.eachLayer((layer) => {
+        const featureLayer = layer as L.GeoJSON;
+        if (featureLayer.feature?.properties) {
+          layer.setStyle(style(featureLayer.feature));
+        }
+      });
+    }
+  }, [tripDensity]);
 
   const getColor = (density: number) => {
     return density > 10000
@@ -40,8 +55,10 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
       return {};
     }
 
+    const density = tripDensityRef.current?.get(Number(feature.properties.location_id)) || 0;
+
     return {
-      fillColor: getColor(feature.properties.density),
+      fillColor: getColor(density),
       weight: 2,
       opacity: 1,
       color: 'white',
@@ -50,7 +67,11 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
     };
   };
 
-  const highlightFeature = (e: L.LeafletMouseEvent, feature: GeoJSON.Feature) => {
+  const highlightFeature = (
+    e: L.LeafletMouseEvent,
+    feature: GeoJSON.Feature,
+    tripDensity: Map<number, number> | undefined
+  ) => {
     const layer = e.target;
     layer.setStyle({
       weight: 5,
@@ -59,10 +80,10 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
       fillOpacity: 0.7
     });
 
-    const popupMessage = `Trip Count: <b>${feature.properties?.density.toString()}</b>`;
+    const density = tripDensity?.get(Number(feature.properties?.location_id)) || 0;
+    const popupMessage = `Trip Count: <b>${density?.toString()}</b>`;
     layer.bindPopup(popupMessage).openPopup();
     layer.bringToFront();
-    clickedLayerRef.current = layer;
   };
 
   const resetStyle = (layer: L.Layer) => {
@@ -78,7 +99,8 @@ const GeoMap: FC<GeoMapProps> = ({ geoData }) => {
           resetStyle(clickedLayerRef.current);
         }
 
-        highlightFeature(e, feature);
+        highlightFeature(e, feature, tripDensityRef.current);
+        clickedLayerRef.current = layer;
       }
     });
   };
