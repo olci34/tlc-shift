@@ -14,6 +14,8 @@ const DateFormInput = forwardRef<HTMLInputElement, DateFormInputProps>(
           {...inputProps}
           onChange={inputProps.onChange}
           variant="outline"
+          max={inputProps.max}
+          min={inputProps.min}
           ref={ref}
           type="date"
           value={inputProps.value}

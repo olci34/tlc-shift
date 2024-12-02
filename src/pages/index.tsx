@@ -83,12 +83,14 @@ export default function Home() {
           <DateFormInput
             value={startDate}
             label="From"
+            max={endDate}
             ref={startDateRef}
             onChange={handleDateChange(setStartDate)}
           />
           <DateFormInput
             value={endDate}
             label="To"
+            min={startDate}
             ref={endDateRef}
             onChange={handleDateChange(setEndDate)}
           />
