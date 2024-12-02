@@ -1,11 +1,16 @@
 import axios from 'axios';
 
+export type TripDensityResponse = {
+  location_id: number;
+  density: number;
+};
+
 const getTrips = async (startDatetime: string, endDatetime: string) => {
   const tripsURL = 'http://localhost:8000/trips';
   const query = `startDate=${startDatetime}&endDate=${endDatetime}`;
-  console.log(startDatetime, endDatetime);
+
   try {
-    const resp = await axios.get(`${tripsURL}?${query}`);
+    const resp = await axios.get<TripDensityResponse[]>(`${tripsURL}?${query}`);
     return resp.data;
   } catch (ex) {
     console.log(`Error occurred. Error: ${ex}`);
