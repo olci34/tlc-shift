@@ -6,7 +6,7 @@ export type TripDensityResponse = {
 };
 
 const getTripDensity = async (startDatetime: string, endDatetime: string) => {
-  const tripsURL = 'http://localhost:8000/trips';
+  const tripsURL = 'http://localhost:8000/density';
   const query = `startDate=${startDatetime}&endDate=${endDatetime}`;
 
   try {
