@@ -8,6 +8,8 @@ import {
   RangeSliderMark,
   RangeSliderThumb,
   RangeSliderTrack,
+  Stack,
+  Text,
   VStack
 } from '@chakra-ui/react';
 import {
@@ -78,63 +80,63 @@ export default function Home() {
 
   return (
     <Box height="full" width="full">
-      <VStack gap={4} height="full" width="full">
-        <HStack gap={4} alignContent="flex-start" width="full">
+      <VStack gap={2} height="full" width="full">
+        <Stack gap={4} direction="row" alignContent="flex-start" width="full">
           <DateFormInput
             value={startDate}
-            label="From"
             max={endDate}
             ref={startDateRef}
             onChange={handleDateChange(setStartDate)}
           />
           <DateFormInput
             value={endDate}
-            label="To"
             min={startDate}
             ref={endDateRef}
             onChange={handleDateChange(setEndDate)}
           />
-        </HStack>
-        <RangeSlider
-          defaultValue={[startTime, endTime]}
-          min={0}
-          max={24}
-          step={1}
-          onChangeEnd={([t1, t2]) => {
-            setEndTime(t2);
-            setStartTime(t1);
-          }}
-        >
-          <RangeSliderMark
-            value={startTime}
-            textAlign="center"
-            bg="blue.500"
-            color="white"
-            mt="-10"
-            ml="-5"
-            w="12"
-            borderRadius={4}
+        </Stack>
+        <Box height={6} width="full" px={6}>
+          <RangeSlider
+            defaultValue={[startTime, endTime]}
+            min={0}
+            max={23}
+            step={1}
+            onChangeEnd={([t1, t2]) => {
+              setEndTime(t2);
+              setStartTime(t1);
+            }}
           >
-            {startTime}
-          </RangeSliderMark>
-          <RangeSliderMark
-            value={endTime}
-            textAlign="center"
-            bg="blue.500"
-            color="white"
-            mt="-10"
-            ml="-5"
-            w="12"
-            borderRadius={4}
-          >
-            {endTime}
-          </RangeSliderMark>
-          <RangeSliderTrack>
-            <RangeSliderFilledTrack />
-          </RangeSliderTrack>
-          <RangeSliderThumb index={0} />
-          <RangeSliderThumb index={1} />
-        </RangeSlider>
+            <RangeSliderMark
+              value={startTime}
+              textAlign="center"
+              bg="blue.500"
+              color="white"
+              mt="-10"
+              ml="-5"
+              w="12"
+              borderRadius={4}
+            />
+            <RangeSliderMark
+              value={endTime}
+              textAlign="center"
+              bg="blue.500"
+              color="white"
+              mt="-10"
+              ml="-5"
+              w="12"
+              borderRadius={4}
+            />
+            <RangeSliderTrack>
+              <RangeSliderFilledTrack />
+            </RangeSliderTrack>
+            <RangeSliderThumb index={0} boxSize={6} width={10} fontSize="xs">
+              <Text color="blackAlpha.600">{startTime}:00</Text>
+            </RangeSliderThumb>
+            <RangeSliderThumb index={1} boxSize={6} width={10} fontSize="xs">
+              <Text color="blackAlpha.600">{endTime}:59</Text>
+            </RangeSliderThumb>
+          </RangeSlider>
+        </Box>
         <Grid templateColumns="repeat(2, 1fr)" height="full" gap={4} width="full">
           <GridItem padding={2} backgroundColor="yellow.200" colSpan={2}>
             <Box height="full">

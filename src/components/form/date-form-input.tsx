@@ -2,14 +2,14 @@ import { FormControl, FormErrorMessage, FormLabel, Input, InputProps } from '@ch
 import { forwardRef } from 'react';
 
 interface DateFormInputProps extends InputProps {
-  label: string;
+  label?: string;
 }
 
 const DateFormInput = forwardRef<HTMLInputElement, DateFormInputProps>(
   ({ label, ...inputProps }, ref) => {
     return (
-      <FormControl display="flex" my={4}>
-        <FormLabel>{label}</FormLabel>
+      <FormControl display="flex">
+        {label && <FormLabel>{label}</FormLabel>}
         <Input
           {...inputProps}
           onChange={inputProps.onChange}
