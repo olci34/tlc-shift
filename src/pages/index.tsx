@@ -2,7 +2,6 @@ import {
   Box,
   Grid,
   GridItem,
-  HStack,
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderMark,

@@ -2,7 +2,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import L, { GeoJSON } from 'leaflet';
 import { MapContainer, TileLayer, GeoJSON as LeafletGeoJSON } from 'react-leaflet';
-import { FeatureCollection } from 'geojson';
+import { FeatureCollection, Feature, Geometry } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 import { Box, Skeleton, Text } from '@chakra-ui/react';
 
@@ -31,8 +31,9 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity }) => {
 
       geojsonRef.current.eachLayer((layer) => {
         const featureLayer = layer as L.GeoJSON;
-        if (featureLayer.feature?.properties) {
-          layer.setStyle(style(featureLayer.feature));
+        const feature = featureLayer.feature as Feature<Geometry>;
+        if (feature) {
+          featureLayer.setStyle(style(feature));
         }
       });
     }
