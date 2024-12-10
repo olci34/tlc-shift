@@ -5,8 +5,10 @@ export type TripDensityResponse = {
   density: number;
 };
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const getTripDensity = async (startDatetime: string, endDatetime: string) => {
-  const tripsURL = 'http://localhost:8000/density';
+  const tripsURL = `${API_URL}/density`;
   const query = `startDate=${startDatetime}&endDate=${endDatetime}`;
 
   try {
