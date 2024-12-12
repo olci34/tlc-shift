@@ -200,7 +200,7 @@ export default function Home() {
                 label="Loading..."
                 transform="translate(-50%, -50%)"
               />
-              <Text color="blackAlpha.800">Loading...</Text>
+              <Text color="blackAlpha.700">Loading... This may take up to 50 seconds.</Text>
             </Stack>
           )}
         </Box>
