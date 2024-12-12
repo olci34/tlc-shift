@@ -113,12 +113,14 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
       height="full"
       filter={isLoading ? 'blur(4px)' : 'none'}
       transition="filter 0.3s ease"
+      backgroundColor="red.200"
+      borderRadius="2xl"
     >
       {!mapReady && <Skeleton width="full" height="full" />}
       <MapContainer
         center={position}
         zoom={12}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', borderRadius: 'inherit' }}
         placeholder={<Text as="p">NYC TLC Density Map</Text>}
         whenReady={() => setMapReady(true)}
       >

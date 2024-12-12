@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 
 const MainLayout: FC<ReactNodeChildrenProps> = ({ children }) => {
   return (
-    <Container as="main" maxW="container.lg" backgroundColor="green.800" paddingBottom={10}>
+    <Container as="main" minH="100vh" maxW="container.lg">
       <VStack height="100vh">
         <NavBar />
         <Box height="full" width="full">
