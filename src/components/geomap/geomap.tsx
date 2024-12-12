@@ -83,7 +83,7 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
     });
 
     const density = tripDensity?.get(Number(feature.properties?.location_id)) || 0;
-    const popupMessage = `Trip Count: <b>${density?.toString()}</b>`;
+    const popupMessage = `<div style='display:flex; flex-direction:column;'><span>Location: <b>${feature.properties?.zone}</b></span><span>Trip Count: <b>${density?.toString()}</b></span></div>`;
     layer.bindPopup(popupMessage).openPopup();
     layer.bringToFront();
   };
