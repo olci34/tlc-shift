@@ -1,6 +1,5 @@
 import {
   Box,
-  Center,
   Grid,
   GridItem,
   RangeSlider,
@@ -39,15 +38,15 @@ export default function Home() {
 
   const [geoData, setGeoData] = useState<FeatureCollection>();
   const [tripDensity, setTripDenstiy] = useState<Map<number, number>>();
-  const [startDate, setStartDate] = useState<string>(last_year_today.format(dateFormat));
-  const [endDate, setEndDate] = useState<string>(last_year_today.format(dateFormat));
+  const [startDate, setStartDate] = useState<moment.Moment>(last_year_today);
+  const [endDate, setEndDate] = useState<moment.Moment>(last_year_today);
   const [startTime, setStartTime] = useState<number>(12);
   const [endTime, setEndTime] = useState<number>(16);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleDateChange = useCallback((setDate: Dispatch<SetStateAction<string>>) => {
+  const handleDateChange = useCallback((setDate: Dispatch<SetStateAction<moment.Moment>>) => {
     return (e: ChangeEvent<HTMLInputElement>) => {
-      setDate(e.target.value);
+      setDate(moment(e.target.value));
     };
   }, []);
 
@@ -64,7 +63,6 @@ export default function Home() {
   useEffect(() => {
     const fetchTrips = debounce(async () => {
       setIsLoading(true);
-      console.log('loading');
       const dateFormat = 'YYYY-MM-DDTHH:mm:ss';
       const s = moment(startDate).set('hour', startTime);
       const e = moment(endDate).set('hour', endTime);
@@ -76,7 +74,6 @@ export default function Home() {
         setTripDenstiy(density);
       }
       setIsLoading(false);
-      console.log('loaded');
     }, 300);
 
     fetchTrips();
@@ -89,16 +86,18 @@ export default function Home() {
       <VStack gap={2} height="full" width="full">
         <Stack gap={4} direction="row" alignContent="flex-start" width="full">
           <DateFormInput
-            value={startDate}
-            max={endDate}
+            value={startDate.format(dateFormat)}
+            max={endDate.format(dateFormat)}
             ref={startDateRef}
             onChange={handleDateChange(setStartDate)}
+            isDisabled={isLoading}
           />
           <DateFormInput
-            value={endDate}
-            min={startDate}
+            value={endDate.format(dateFormat)}
+            min={startDate.format(dateFormat)}
             ref={endDateRef}
             onChange={handleDateChange(setEndDate)}
+            isDisabled={isLoading}
           />
         </Stack>
         <Box height={6} width="full" px={6}>
@@ -111,6 +110,7 @@ export default function Home() {
               setEndTime(t2);
               setStartTime(t1);
             }}
+            isDisabled={isLoading}
           >
             <RangeSliderMark
               value={startTime}
@@ -146,7 +146,7 @@ export default function Home() {
         <Grid templateColumns="repeat(2, 1fr)" height="full" gap={4} width="full">
           <GridItem padding={2} backgroundColor="yellow.200" colSpan={2}>
             <Box height="full">
-              <GeoMap geoData={geoData} tripDensity={tripDensity} />
+              <GeoMap geoData={geoData} tripDensity={tripDensity} isLoading={isLoading} />
               {isLoading && (
                 <Stack direction="column" position="absolute" top="50%" left="50%" zIndex={1000}>
                   <Spinner
@@ -155,6 +155,7 @@ export default function Home() {
                     color="blue.300"
                     thickness="4px"
                     label="Loading..."
+                    transform="translate(-50%, -50%)"
                   />
                   <Text color="blackAlpha.800">Loading...</Text>
                 </Stack>

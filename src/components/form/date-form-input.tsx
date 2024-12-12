@@ -18,7 +18,7 @@ const DateFormInput = forwardRef<HTMLInputElement, DateFormInputProps>(
           min={inputProps.min}
           ref={ref}
           type="date"
-          value={inputProps.value}
+          value={inputProps.value?.toString()}
         />
         <FormErrorMessage>Error message</FormErrorMessage>
       </FormControl>

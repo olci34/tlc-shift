@@ -9,9 +9,10 @@ import { Box, Skeleton, Text } from '@chakra-ui/react';
 interface GeoMapProps {
   geoData?: FeatureCollection;
   tripDensity?: Map<number, number>;
+  isLoading?: boolean;
 }
 
-const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity }) => {
+const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
   const position: L.LatLngExpression = [40.7831, -73.9712];
   const tripDensityRef = useRef(tripDensity);
   const clickedLayerRef = useRef<L.Layer | null>(null);
@@ -107,7 +108,12 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity }) => {
   };
 
   return (
-    <Box width="full" height="full">
+    <Box
+      width="full"
+      height="full"
+      filter={isLoading ? 'blur(4px)' : 'none'}
+      transition="filter 0.3s ease"
+    >
       {!mapReady && <Skeleton width="full" height="full" />}
       <MapContainer
         center={position}

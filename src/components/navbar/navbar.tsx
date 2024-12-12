@@ -20,7 +20,7 @@ const NavBar = () => {
         Trips
       </NavLinkItem>
 
-      <NavLinkItem href="#" path={router.asPath} prefetch={false}>
+      <NavLinkItem href="/earnings" path={router.asPath} prefetch={false}>
         Earnings
       </NavLinkItem>
     </Box>
