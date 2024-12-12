@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Grid,
   GridItem,
   RangeSlider,
@@ -7,6 +8,7 @@ import {
   RangeSliderMark,
   RangeSliderThumb,
   RangeSliderTrack,
+  Spinner,
   Stack,
   Text,
   VStack
@@ -41,6 +43,7 @@ export default function Home() {
   const [endDate, setEndDate] = useState<string>(last_year_today.format(dateFormat));
   const [startTime, setStartTime] = useState<number>(12);
   const [endTime, setEndTime] = useState<number>(16);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleDateChange = useCallback((setDate: Dispatch<SetStateAction<string>>) => {
     return (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +63,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchTrips = debounce(async () => {
+      setIsLoading(true);
+      console.log('loading');
       const dateFormat = 'YYYY-MM-DDTHH:mm:ss';
       const s = moment(startDate).set('hour', startTime);
       const e = moment(endDate).set('hour', endTime);
@@ -70,6 +75,8 @@ export default function Home() {
         resp.forEach((data) => density.set(data.location_id, data.density));
         setTripDenstiy(density);
       }
+      setIsLoading(false);
+      console.log('loaded');
     }, 300);
 
     fetchTrips();
@@ -140,6 +147,18 @@ export default function Home() {
           <GridItem padding={2} backgroundColor="yellow.200" colSpan={2}>
             <Box height="full">
               <GeoMap geoData={geoData} tripDensity={tripDensity} />
+              {isLoading && (
+                <Stack direction="column" position="absolute" top="50%" left="50%" zIndex={1000}>
+                  <Spinner
+                    size="xl"
+                    emptyColor="orange.300"
+                    color="blue.300"
+                    thickness="4px"
+                    label="Loading..."
+                  />
+                  <Text color="blackAlpha.800">Loading...</Text>
+                </Stack>
+              )}
             </Box>
           </GridItem>
         </Grid>
