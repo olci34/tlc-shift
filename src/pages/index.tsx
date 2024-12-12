@@ -39,11 +39,12 @@ export default function Home() {
 
   const [geoData, setGeoData] = useState<FeatureCollection>();
   const [tripDensity, setTripDenstiy] = useState<Map<number, number>>();
-  const [startDate, setStartDate] = useState<moment.Moment>(last_year_today);
-  const [endDate, setEndDate] = useState<moment.Moment>(last_year_today);
   const [startTime, setStartTime] = useState<number>(12);
   const [endTime, setEndTime] = useState<number>(16);
+  const [startDate, setStartDate] = useState<moment.Moment>(last_year_today.set('hour', startTime));
+  const [endDate, setEndDate] = useState<moment.Moment>(last_year_today.set('hour', endTime));
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const startSliderText = useRef<HTMLParagraphElement>(null);
   const endSliderText = useRef<HTMLParagraphElement>(null);
 
@@ -80,8 +81,8 @@ export default function Home() {
     const fetchTrips = debounce(async () => {
       setIsLoading(true);
       const dateFormat = 'YYYY-MM-DDTHH:mm:ss';
-      const s = startDate.set('hour', startTime);
-      const e = endDate.set('hour', endTime);
+      const s = moment(startDate).set('hour', startTime).set('minute', 0);
+      const e = moment(endDate).set('hour', endTime).set('minute', 59);
       const resp = await getTripDensity(s.format(dateFormat), e.format(dateFormat));
 
       if (resp) {
@@ -93,7 +94,6 @@ export default function Home() {
     }, 300);
 
     fetchTrips();
-
     return () => fetchTrips.cancel();
   }, [startDate, endDate, startTime, endTime]);
 
