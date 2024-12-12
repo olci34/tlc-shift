@@ -28,6 +28,10 @@ const NavBar = () => {
           <NavLinkItem href="/earnings" path={router.asPath} prefetch={false}>
             Earnings
           </NavLinkItem>
+
+          <NavLinkItem href="/about" path={router.asPath} prefetch={false}>
+            About
+          </NavLinkItem>
         </Flex>
 
         <IconButton
