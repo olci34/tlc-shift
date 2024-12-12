@@ -10,9 +10,10 @@ interface GeoMapProps {
   geoData?: FeatureCollection;
   tripDensity?: Map<number, number>;
   isLoading?: boolean;
+  timeSpan: number;
 }
 
-const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
+const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading, timeSpan }) => {
   const position: L.LatLngExpression = [40.7831, -73.9712];
   const tripDensityRef = useRef(tripDensity);
   const clickedLayerRef = useRef<L.Layer | null>(null);
@@ -40,14 +41,15 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
     }
   }, [tripDensity]);
 
-  const getColor = (density: number) => {
-    return density > 10000
+  const getColor = (tripCount: number) => {
+    const density = tripCount / timeSpan;
+    return density > 360
       ? '#800026'
-      : density > 5000
+      : density > 300
         ? '#BD0026'
-        : density > 2000
+        : density > 240
           ? '#E31A1C'
-          : density > 1000
+          : density > 180
             ? '#FC4E2A'
             : '#FFEDA0';
   };
@@ -57,10 +59,10 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
       return {};
     }
 
-    const density = tripDensityRef.current?.get(Number(feature.properties.location_id)) || 0;
+    const tripCount = tripDensityRef.current?.get(Number(feature.properties.location_id)) || 0;
 
     return {
-      fillColor: getColor(density),
+      fillColor: getColor(tripCount),
       weight: 2,
       opacity: 1,
       color: 'white',

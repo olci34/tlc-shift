@@ -184,7 +184,12 @@ export default function Home() {
         </Stack>
 
         <Box backgroundColor="yellow.200" width="full" height="full" borderRadius="2xl">
-          <GeoMap geoData={geoData} tripDensity={tripDensity} isLoading={isLoading} />
+          <GeoMap
+            geoData={geoData}
+            tripDensity={tripDensity}
+            isLoading={isLoading}
+            timeSpan={endTime - startTime + 1}
+          />
           {isLoading && (
             <Stack direction="column" position="absolute" top="50%" left="50%" zIndex={1000}>
               <Spinner
