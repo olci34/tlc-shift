@@ -10,10 +10,9 @@ interface GeoMapProps {
   geoData?: FeatureCollection;
   tripDensity?: Map<number, number>;
   isLoading?: boolean;
-  timeSpan: number;
 }
 
-const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading, timeSpan }) => {
+const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
   const position: L.LatLngExpression = [40.7831, -73.9712];
   const tripDensityRef = useRef(tripDensity);
   const clickedLayerRef = useRef<L.Layer | null>(null);
@@ -41,13 +40,12 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading, timeSpan }) 
     }
   }, [tripDensity]);
 
-  const getColor = (tripCount: number) => {
-    const density = tripCount / timeSpan;
-    return density > 360
+  const getColor = (density: number) => {
+    return density > 600
       ? '#800026'
-      : density > 300
+      : density > 480
         ? '#BD0026'
-        : density > 240
+        : density > 360
           ? '#E31A1C'
           : density > 180
             ? '#FC4E2A'
@@ -59,10 +57,10 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading, timeSpan }) 
       return {};
     }
 
-    const tripCount = tripDensityRef.current?.get(Number(feature.properties.location_id)) || 0;
+    const density = tripDensityRef.current?.get(Number(feature.properties.location_id)) || 0;
 
     return {
-      fillColor: getColor(tripCount),
+      fillColor: getColor(density),
       weight: 2,
       opacity: 1,
       color: 'white',
@@ -85,7 +83,7 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading, timeSpan }) 
     });
 
     const density = tripDensity?.get(Number(feature.properties?.location_id)) || 0;
-    const popupMessage = `<div style='display:flex; flex-direction:column;'><span>Location: <b>${feature.properties?.zone}</b></span><span>Trip Count: <b>${density?.toString()}</b></span></div>`;
+    const popupMessage = `<div style='display:flex; flex-direction:column;'><span>Location: <b>${feature.properties?.zone}</b></span><span>Trip Count: <b>${density?.toString()}</b></span><span>Loc Id: <b>${feature.properties?.location_id}</b></span></div>`;
     layer.bindPopup(popupMessage).openPopup();
     layer.bringToFront();
   };
