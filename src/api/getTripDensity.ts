@@ -6,9 +6,8 @@ export type TripDensityResponse = {
   density: number;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 const getTripDensity = async (startDatetime: Moment, startTime: number, endTime: number) => {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const dateFormat = 'YYYY-MM-DDTHH:mm:ss.000';
   const tripsURL = new URL(`${API_URL}/trips/density`);
   startDatetime.set('hour', startTime);

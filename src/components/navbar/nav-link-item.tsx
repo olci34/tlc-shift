@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react';
+import { Button, useColorModeValue } from '@chakra-ui/react';
 import Link from 'next/link';
 import React, { FC } from 'react';
 
@@ -25,7 +25,7 @@ const NavLinkItem: FC<NavLinkItemProps> = ({ href, target, path, prefetch, child
         textDecoration={isActive ? 'underline' : 'none'}
         textUnderlineOffset={6}
         textDecorationThickness="2px"
-        textDecorationColor="red"
+        textDecorationColor={useColorModeValue('green.600', 'green.300')}
         display="inline-flex"
         alignItems="center"
         whiteSpace="nowrap"
