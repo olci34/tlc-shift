@@ -11,7 +11,9 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  Stack
+  Stack,
+  Text,
+  Heading
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NavLinkItem from './nav-link-item';
@@ -50,7 +52,9 @@ const NavBar = () => {
               <DrawerOverlay />
               <DrawerContent>
                 <DrawerCloseButton />
-                <DrawerHeader>Navigation</DrawerHeader>
+                <DrawerHeader>
+                  <Text size="lg">TLC Shift</Text>
+                </DrawerHeader>
                 <DrawerBody>
                   <Stack direction="column" spacing={4}>
                     <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
@@ -87,6 +91,9 @@ const NavBar = () => {
           </>
         ) : (
           <Flex gap={4}>
+            <Heading size="lg" display="inline">
+              TLC Shift
+            </Heading>
             <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
               Trips
             </NavLinkItem>
