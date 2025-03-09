@@ -5,6 +5,7 @@ import { USCarBrand } from '@/lib/constants/car-brands';
 import { Listing } from '@/lib/interfaces/Listing';
 import { Search2Icon } from '@chakra-ui/icons';
 import { Box, Button, FormControl, Select, Stack, useColorModeValue } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
@@ -151,8 +152,14 @@ const ListingsPage = () => {
       <Button onClick={() => router.push('/listings/create')}>Create</Button>
       <Box paddingY={2}>
         <Stack direction={{ base: 'column', sm: 'row' }} wrap="wrap" justify="flex-start">
-          {listings?.map((listing, idx) => (
-            <ListingCard key={listing.title + idx + page} {...listing} />
+          {listings?.map((listing) => (
+            <ListingCard
+              key={listing._id}
+              listing={listing}
+              onClick={() => {
+                if (listing._id) router.push(`/listings/${listing._id}`);
+              }}
+            />
           ))}
         </Stack>
       </Box>

@@ -12,7 +12,12 @@ import {
 import { CldImage } from 'next-cloudinary';
 import React from 'react';
 
-export const ListingCard: React.FC<Listing> = (listing: Listing) => {
+export interface ListingCardProps {
+  listing: Listing;
+  onClick: () => void;
+}
+
+export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) => {
   return (
     <Card
       minWidth={250}
@@ -22,6 +27,8 @@ export const ListingCard: React.FC<Listing> = (listing: Listing) => {
       borderTopLeftRadius="0.5rem"
       borderTopRightRadius="0.5rem"
       overflow="hidden"
+      onClick={onClick}
+      cursor="pointer"
     >
       <Box height={150} width={{ base: '40%', sm: 'full' }} position="relative" flexShrink={0}>
         <CldImage

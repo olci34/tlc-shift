@@ -30,6 +30,7 @@ export interface ListingLocation {
 }
 
 export interface Listing {
+  _id?: string;
   title: string;
   description: string;
   transaction_type?: 'Rental' | 'Sale';
