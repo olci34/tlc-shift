@@ -11,7 +11,9 @@ import {
   FormControl,
   Icon,
   Select,
+  Show,
   Stack,
+  Text,
   useColorModeValue,
   useDisclosure
 } from '@chakra-ui/react';
@@ -147,7 +149,7 @@ const ListingsPage = () => {
             </FormControl>
           </Stack>
 
-          <FormControl>
+          <FormControl flexShrink={0} width={{ base: 'full', sm: '230px' }}>
             <Select
               placeholder="Select mileage range"
               value={carFilter?.mileageRange}
@@ -161,8 +163,15 @@ const ListingsPage = () => {
               <option value="200000+">200,000+ miles</option>
             </Select>
           </FormControl>
-          <Button background={useColorModeValue('green.600', 'green.300')} onClick={handleSearch}>
+          <Button
+            background={useColorModeValue('green.600', 'green.300')}
+            onClick={handleSearch}
+            width={{ base: 'full', sm: 'auto' }}
+          >
             <Search2Icon />
+            <Show below="sm">
+              <Text mx={1}>Search</Text>
+            </Show>
           </Button>
         </Stack>
       </Collapse>
