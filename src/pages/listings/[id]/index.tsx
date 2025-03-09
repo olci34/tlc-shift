@@ -16,9 +16,6 @@ const ListingViewPage: FC = () => {
   useEffect(() => {
     const fetchListing = async () => {
       const resp = await getListing(id as string);
-      if (resp?.images) {
-        resp.images = [...resp.images, ...resp.images, ...resp.images, ...resp.images];
-      }
       setListing(resp);
     };
 

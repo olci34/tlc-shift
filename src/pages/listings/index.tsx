@@ -77,6 +77,7 @@ const ListingsPage = () => {
         <Icon as={IoFilter} marginRight={1} />
         Filter
       </Button>
+
       {/* Filters */}
       <Collapse in={isOpen}>
         <Stack direction={{ base: 'column', md: 'row' }} spacing={4} my={4} align="flex-start">
@@ -175,7 +176,6 @@ const ListingsPage = () => {
           </Button>
         </Stack>
       </Collapse>
-      <Button onClick={() => router.push('/listings/create')}>Create</Button>
 
       {/* Listing Tiles */}
       <Box paddingY={2}>

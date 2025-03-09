@@ -88,6 +88,9 @@ const NavBar = () => {
                 </DrawerBody>
               </DrawerContent>
             </Drawer>
+            <Heading size="lg" display="inline">
+              TLC Shift
+            </Heading>
           </>
         ) : (
           <Flex gap={4}>
