@@ -13,7 +13,11 @@ import {
   DrawerBody,
   Stack,
   Text,
-  Heading
+  Heading,
+  VStack,
+  Icon,
+  Switch,
+  HStack
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NavLinkItem from './nav-link-item';
@@ -84,6 +88,11 @@ const NavBar = () => {
                     >
                       Listings
                     </NavLinkItem>
+                    <HStack p={2}>
+                      <Icon as={SunIcon} boxSize={6} />
+                      <Switch aria-label="Toggle color mode" onClick={toggleColorMode} size="lg" />
+                      <Icon as={MoonIcon} boxSize={6} />
+                    </HStack>
                   </Stack>
                 </DrawerBody>
               </DrawerContent>
@@ -111,15 +120,22 @@ const NavBar = () => {
             </NavLinkItem>
           </Flex>
         )}
+        <Box>
+          <NavLinkItem href="/signup-login" path={router.asPath} prefetch={false} onClick={onClose}>
+            Login
+          </NavLinkItem>
 
-        <IconButton
-          aria-label="Toggle color mode"
-          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          onClick={toggleColorMode}
-          variant="ghost"
-          colorScheme="gray"
-          size="md"
-        />
+          {!isHamburger && (
+            <IconButton
+              aria-label="Toggle color mode"
+              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+              variant="ghost"
+              colorScheme="gray"
+              size="md"
+            />
+          )}
+        </Box>
       </Flex>
     </Box>
   );

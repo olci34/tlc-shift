@@ -1,7 +1,17 @@
 import { getListing } from '@/api/getListing';
 import { Listing } from '@/lib/interfaces/Listing';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, Heading, HStack, Icon, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Heading,
+  HStack,
+  Icon,
+  Skeleton,
+  Stack,
+  Text
+} from '@chakra-ui/react';
 import { CldImage } from 'next-cloudinary';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useState } from 'react';
@@ -36,42 +46,48 @@ const ListingViewPage: FC = () => {
           overflow="hidden"
           borderRadius="lg"
         >
-          <CldImage
-            src={listing?.images[imageIdx].cld_public_id ?? ''}
-            fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 40vw"
-            aspectRatio="fill_pad"
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center'
-            }}
-            alt="Listing Image"
-          />
+          {listing?.images && listing.images.length ? (
+            <>
+              <CldImage
+                src={listing?.images[imageIdx].cld_public_id ?? ''}
+                fill
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 40vw"
+                aspectRatio="fill_pad"
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center'
+                }}
+                alt="Listing Image"
+              />
 
-          <Button
-            leftIcon={<ArrowLeftIcon />}
-            onClick={() => setImageIdx(imageIdx - 1)}
-            disabled={imageIdx === 0}
-            position="absolute"
-            backgroundColor="gray.600"
-            top="45%"
-            display={{ base: 'none', sm: 'inline' }}
-            opacity={0.3}
-            left={0}
-          ></Button>
+              <Button
+                leftIcon={<ArrowLeftIcon />}
+                onClick={() => setImageIdx(imageIdx - 1)}
+                disabled={imageIdx === 0}
+                position="absolute"
+                backgroundColor="gray.600"
+                top="45%"
+                display={{ base: 'none', sm: 'inline' }}
+                opacity={0.3}
+                left={0}
+              ></Button>
 
-          <Button
-            onClick={() => setImageIdx(imageIdx + 1)}
-            disabled={imageIdx + 1 === listing?.images.length}
-            rightIcon={<ArrowRightIcon />}
-            hideBelow="md"
-            position="absolute"
-            top="45%"
-            display={{ base: 'none', sm: 'inline' }}
-            backgroundColor="gray.600"
-            opacity={0.3}
-            right={0}
-          ></Button>
+              <Button
+                onClick={() => setImageIdx(imageIdx + 1)}
+                disabled={imageIdx + 1 === listing?.images.length}
+                rightIcon={<ArrowRightIcon />}
+                hideBelow="md"
+                position="absolute"
+                top="45%"
+                display={{ base: 'none', sm: 'inline' }}
+                backgroundColor="gray.600"
+                opacity={0.3}
+                right={0}
+              ></Button>
+            </>
+          ) : (
+            <Skeleton width="full" height="full" />
+          )}
         </Box>
 
         <Box
@@ -83,30 +99,39 @@ const ListingViewPage: FC = () => {
           my={2}
           overflowX="scroll"
         >
-          {listing?.images &&
-            listing?.images.map((img, idx) => (
-              <Box
-                key={img.cld_public_id}
-                overflow="hidden"
-                flexShrink={0}
-                m={0}
-                borderRadius="lg"
-                onClick={() => setImageIdx(idx)}
-                cursor="pointer"
-                border={idx === imageIdx ? '2px' : 'none'}
-                boxShadow={idx == imageIdx ? 'outline' : ''}
-                width={100}
-              >
-                <CldImage
-                  src={listing?.images[idx].cld_public_id ?? ''}
+          {listing?.images && listing.images.length ? (
+            <>
+              {listing?.images.map((img, idx) => (
+                <Box
+                  key={img.cld_public_id}
+                  overflow="hidden"
+                  flexShrink={0}
+                  m={0}
+                  borderRadius="lg"
+                  onClick={() => setImageIdx(idx)}
+                  cursor="pointer"
+                  border={idx === imageIdx ? '2px' : 'none'}
+                  boxShadow={idx == imageIdx ? 'outline' : ''}
                   width={100}
-                  height={100}
-                  crop="fill"
-                  alt="Listing Image"
-                  sizes="(max-width: 768px) 30vw, (max-width: 1200px) 50vw, 10vw"
-                />
-              </Box>
-            ))}
+                >
+                  <CldImage
+                    src={listing?.images[idx].cld_public_id ?? ''}
+                    width={100}
+                    height={100}
+                    crop="fill"
+                    alt="Listing Image"
+                    sizes="(max-width: 768px) 30vw, (max-width: 1200px) 50vw, 10vw"
+                  />
+                </Box>
+              ))}
+            </>
+          ) : (
+            <>
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <Skeleton key={`sm-skt-${idx}`} height={100} width={100} />
+              ))}
+            </>
+          )}
         </Box>
       </Box>
 
