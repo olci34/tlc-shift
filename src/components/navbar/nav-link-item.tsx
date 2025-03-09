@@ -8,9 +8,10 @@ type NavLinkItemProps = {
   path: string;
   prefetch: boolean;
   children: React.ReactNode;
+  onClick: () => void;
 };
 
-const NavLinkItem: FC<NavLinkItemProps> = ({ href, target, path, prefetch, children }) => {
+const NavLinkItem: FC<NavLinkItemProps> = ({ href, target, path, prefetch, children, onClick }) => {
   const isActive = href === path;
 
   return (
@@ -20,6 +21,7 @@ const NavLinkItem: FC<NavLinkItemProps> = ({ href, target, path, prefetch, child
       scroll={false}
       style={{ paddingLeft: '0.25rem', paddingRight: '0.25rem' }}
       prefetch={prefetch}
+      onClick={onClick}
     >
       <Button
         textDecoration={isActive ? 'underline' : 'none'}
@@ -30,6 +32,7 @@ const NavLinkItem: FC<NavLinkItemProps> = ({ href, target, path, prefetch, child
         alignItems="center"
         whiteSpace="nowrap"
         padding={2}
+        variant="unstyled"
       >
         {children}
       </Button>

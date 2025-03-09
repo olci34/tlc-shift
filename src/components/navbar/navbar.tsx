@@ -1,11 +1,27 @@
-import { Box, IconButton, useColorMode, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  IconButton,
+  useColorMode,
+  Flex,
+  useBreakpointValue,
+  useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  Stack
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NavLinkItem from './nav-link-item';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, SunIcon, HamburgerIcon } from '@chakra-ui/icons';
 
 const NavBar = () => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
+  const isHamburger = useBreakpointValue({ base: true, md: false });
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box
@@ -20,23 +36,71 @@ const NavBar = () => {
       py={2}
     >
       <Flex justify="space-between" align="center" height="100%">
-        <Flex gap={4}>
-          <NavLinkItem href="/" path={router.asPath} prefetch={false}>
-            Trips
-          </NavLinkItem>
-
-          <NavLinkItem href="/earnings" path={router.asPath} prefetch={false}>
-            Earnings
-          </NavLinkItem>
-
-          <NavLinkItem href="/about" path={router.asPath} prefetch={false}>
-            About
-          </NavLinkItem>
-
-          <NavLinkItem href="/listings" path={router.asPath} prefetch={false}>
-            Listings
-          </NavLinkItem>
-        </Flex>
+        {isHamburger ? (
+          <>
+            <IconButton
+              aria-label="Open Navigation"
+              icon={<HamburgerIcon />}
+              onClick={onOpen}
+              variant="ghost"
+              colorScheme="gray"
+              size="md"
+            />
+            <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+              <DrawerOverlay />
+              <DrawerContent>
+                <DrawerCloseButton />
+                <DrawerHeader>Navigation</DrawerHeader>
+                <DrawerBody>
+                  <Stack direction="column" spacing={4}>
+                    <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
+                      Trips
+                    </NavLinkItem>
+                    <NavLinkItem
+                      href="/earnings"
+                      path={router.asPath}
+                      prefetch={false}
+                      onClick={onClose}
+                    >
+                      Earnings
+                    </NavLinkItem>
+                    <NavLinkItem
+                      href="/about"
+                      path={router.asPath}
+                      prefetch={false}
+                      onClick={onClose}
+                    >
+                      About
+                    </NavLinkItem>
+                    <NavLinkItem
+                      href="/listings"
+                      path={router.asPath}
+                      prefetch={false}
+                      onClick={onClose}
+                    >
+                      Listings
+                    </NavLinkItem>
+                  </Stack>
+                </DrawerBody>
+              </DrawerContent>
+            </Drawer>
+          </>
+        ) : (
+          <Flex gap={4}>
+            <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
+              Trips
+            </NavLinkItem>
+            <NavLinkItem href="/earnings" path={router.asPath} prefetch={false} onClick={onClose}>
+              Earnings
+            </NavLinkItem>
+            <NavLinkItem href="/about" path={router.asPath} prefetch={false} onClick={onClose}>
+              About
+            </NavLinkItem>
+            <NavLinkItem href="/listings" path={router.asPath} prefetch={false} onClick={onClose}>
+              Listings
+            </NavLinkItem>
+          </Flex>
+        )}
 
         <IconButton
           aria-label="Toggle color mode"
