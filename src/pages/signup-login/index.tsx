@@ -23,6 +23,7 @@ import { isValidEmail } from '@/lib/utils/email-validator';
 import { isValidPassword } from '@/lib/utils/password-validator';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { signup } from '@/api/signup';
 
 export interface SignupData {
   email: string;
@@ -43,6 +44,7 @@ interface SignupErrors {
   lastName: string | null;
   password: string | null;
   confirmPassword: string | null;
+  errorMessage: string | null;
 }
 
 interface LoginErrors {
@@ -71,7 +73,8 @@ const SignupLogin: React.FC = () => {
     firstName: null,
     lastName: null,
     password: null,
-    confirmPassword: null
+    confirmPassword: null,
+    errorMessage: null
   });
 
   const [loginErrors, setLoginErrors] = useState<LoginErrors>({
@@ -96,9 +99,27 @@ const SignupLogin: React.FC = () => {
     validateLogin(name as keyof LoginErrors, value);
   };
 
-  const handleSignupSubmit = () => {
+  const handleSignupSubmit = async () => {
     // Add your signup logic here
     console.log('Signup Data:', signupData);
+    const res = await signup(signupData);
+    if (res) {
+      const creds: LoginData = { email: signupData.email, password: signupData.password };
+      const res = await signIn('credentials', {
+        ...creds,
+        callbackUrl: `/`,
+        redirect: false
+      });
+
+      if (res?.ok && res.url) {
+        setLoginErrors({ ...loginErrors, errorMessage: null });
+        router.push(res.url);
+      } else if (res?.error) {
+        setLoginErrors({ ...loginErrors, errorMessage: res.error });
+      }
+    } else {
+      setSignupErrors({ ...signupErrors, errorMessage: 'Error occurred when signup' });
+    }
   };
 
   const handleLoginSubmit = async () => {
@@ -261,7 +282,11 @@ const SignupLogin: React.FC = () => {
           </TabPanel>
           <TabPanel>
             <VStack spacing={4}>
-              <FormControl id="login-email" isRequired isInvalid={!loginData.email}>
+              <FormControl
+                id="login-email"
+                isRequired
+                isInvalid={!loginData.email && !!loginErrors.email}
+              >
                 <FormLabel>Email address</FormLabel>
                 <Input
                   type="email"
@@ -271,7 +296,11 @@ const SignupLogin: React.FC = () => {
                 />
                 {loginErrors.email && <FormErrorMessage>{loginErrors.email}</FormErrorMessage>}
               </FormControl>
-              <FormControl id="login-password" isRequired isInvalid={!loginData.password}>
+              <FormControl
+                id="login-password"
+                isRequired
+                isInvalid={!loginData.password && !!loginErrors.password}
+              >
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input

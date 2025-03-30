@@ -148,6 +148,7 @@ const NavBar = () => {
               variant="ghost"
               colorScheme="gray"
               size="md"
+              onClick={toggleColorMode}
             />
           )}
         </Box>
