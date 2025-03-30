@@ -89,9 +89,9 @@ const NavBar = () => {
                       Listings
                     </NavLinkItem>
                     <HStack p={2}>
-                      <Icon as={SunIcon} boxSize={6} />
-                      <Switch aria-label="Toggle color mode" onClick={toggleColorMode} size="lg" />
                       <Icon as={MoonIcon} boxSize={6} />
+                      <Switch aria-label="Toggle color mode" size="lg" onChange={toggleColorMode} />
+                      <Icon as={SunIcon} boxSize={6} />
                     </HStack>
                   </Stack>
                 </DrawerBody>
@@ -129,7 +129,6 @@ const NavBar = () => {
             <IconButton
               aria-label="Toggle color mode"
               icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              onClick={toggleColorMode}
               variant="ghost"
               colorScheme="gray"
               size="md"
