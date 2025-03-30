@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
 import {
   Tabs,
   TabList,
@@ -21,8 +21,8 @@ import {
 import { ViewOffIcon, ViewIcon } from '@chakra-ui/icons';
 import { isValidEmail } from '@/lib/utils/email-validator';
 import { isValidPassword } from '@/lib/utils/password-validator';
-import { login } from '@/api/login';
-import { AxiosError } from 'axios';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export interface SignupData {
   email: string;
@@ -52,6 +52,7 @@ interface LoginErrors {
 }
 
 const SignupLogin: React.FC = () => {
+  const router = useRouter();
   const [signupData, setSignupData] = useState<SignupData>({
     email: '',
     firstName: '',
@@ -102,11 +103,18 @@ const SignupLogin: React.FC = () => {
 
   const handleLoginSubmit = async () => {
     console.log('Login Data:', loginData);
-    try {
-      const authData = await login(loginData);
-      console.log(authData);
-    } catch (e: AxiosError | any) {
-      // display error message
+    const creds: LoginData = { email: loginData.email, password: loginData.password };
+    const res = await signIn('credentials', {
+      ...creds,
+      callbackUrl: `/`,
+      redirect: false
+    });
+
+    if (res?.ok && res.url) {
+      setLoginErrors({ ...loginErrors, errorMessage: null });
+      router.push(res.url);
+    } else if (res?.error) {
+      setLoginErrors({ ...loginErrors, errorMessage: res.error });
     }
   };
 

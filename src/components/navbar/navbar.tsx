@@ -17,17 +17,25 @@ import {
   VStack,
   Icon,
   Switch,
-  HStack
+  HStack,
+  Button
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NavLinkItem from './nav-link-item';
 import { MoonIcon, SunIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { signOut, useSession } from 'next-auth/react';
+import { AUTH_STATUS } from '@/lib/utils/auth';
 
 const NavBar = () => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const isHamburger = useBreakpointValue({ base: true, md: false });
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { status } = useSession();
+  const logout = () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    signOut({ callbackUrl: API_URL });
+  };
 
   return (
     <Box
@@ -121,10 +129,18 @@ const NavBar = () => {
           </Flex>
         )}
         <Box>
-          <NavLinkItem href="/signup-login" path={router.asPath} prefetch={false} onClick={onClose}>
-            Login
-          </NavLinkItem>
-
+          {status !== AUTH_STATUS.Authenticated ? (
+            <NavLinkItem
+              href="/signup-login"
+              path={router.asPath}
+              prefetch={false}
+              onClick={onClose}
+            >
+              Login
+            </NavLinkItem>
+          ) : (
+            <Button onClick={logout}>Logout</Button>
+          )}
           {!isHamburger && (
             <IconButton
               aria-label="Toggle color mode"
