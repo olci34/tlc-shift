@@ -1,5 +1,16 @@
 import { LoginData } from '@/pages/signup-login';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
+import apiClient from './interceptors/apiClient';
+
+export interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface LoginResponse extends Token {
+  user: User;
+}
 
 export interface Token {
   access_token: string;
@@ -7,14 +18,13 @@ export interface Token {
 }
 
 export const login = async (loginData: LoginData) => {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const url = `${API_URL}/users/login`;
+  const url = `/users/login`;
   const formData = new URLSearchParams();
   formData.append('username', loginData.email);
   formData.append('password', loginData.password);
 
   try {
-    const resp = await axios.post<Token>(url, formData.toString());
+    const resp = await apiClient.post<LoginResponse>(url, formData.toString());
     return resp.data;
   } catch (ex: AxiosError | any) {
     console.log(`Error occurred when login. Error: ${(ex as AxiosError).message}`);

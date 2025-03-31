@@ -101,7 +101,6 @@ const SignupLogin: React.FC = () => {
 
   const handleSignupSubmit = async () => {
     // Add your signup logic here
-    console.log('Signup Data:', signupData);
     const res = await signup(signupData);
     if (res) {
       const creds: LoginData = { email: signupData.email, password: signupData.password };
@@ -123,7 +122,6 @@ const SignupLogin: React.FC = () => {
   };
 
   const handleLoginSubmit = async () => {
-    console.log('Login Data:', loginData);
     const creds: LoginData = { email: loginData.email, password: loginData.password };
     const res = await signIn('credentials', {
       ...creds,

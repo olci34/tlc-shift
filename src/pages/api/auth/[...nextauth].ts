@@ -2,21 +2,27 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import NextAuth, { AuthOptions } from 'next-auth';
 import { LoginData } from '@/pages/signup-login';
 import { login } from '@/api/login';
-import { authOptions } from '../../../../auth.config';
+import { authConfig } from '../../../../auth.config';
 
-export const authOptionss = {
-  ...authOptions,
+export const authOptions = {
+  ...authConfig,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {},
       async authorize(credentials, req) {
         const { email, password } = credentials as LoginData;
-        const token = await login({ email, password });
+        const loginData = await login({ email, password });
 
-        if (token.access_token) {
+        if (loginData.access_token) {
           // Any object returned will be saved in `user` property of the JWT
-          return { id: token.access_token, ...token };
+          return {
+            id: loginData.user.id,
+            firstName: loginData.user.first_name,
+            lastName: loginData.user.last_name,
+            accessToken: loginData.access_token,
+            tokenType: loginData.token_type
+          };
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           throw Error('Something went wrong while login');
@@ -27,4 +33,4 @@ export const authOptionss = {
   ]
 } satisfies AuthOptions;
 
-export default NextAuth(authOptionss);
+export default NextAuth(authOptions);

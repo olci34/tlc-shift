@@ -1,7 +1,7 @@
 import { AuthOptions } from 'next-auth';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const authOptions = {
+export const authConfig = {
   callbacks: {
     async jwt({ token, user, trigger }) {
       //TODO: Use trigger 'update', when user changes their data that is stored in jwt to update session data.
@@ -15,7 +15,7 @@ export const authOptions = {
       if (user) {
         return true;
       } else {
-        return `${API_URL}/login`;
+        return `${API_URL}/signup-login`;
       }
     }
   },

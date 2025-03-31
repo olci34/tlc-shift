@@ -1,11 +1,10 @@
 import { Listing } from '@/lib/interfaces/Listing';
-import axios from 'axios';
+import apiClient from './interceptors/apiClient';
 
 export const getListing = async (id: string) => {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const url = `${API_URL}/listings/${id}`;
+  const url = `/listings/${id}`;
   try {
-    const resp = await axios.get<Listing>(url);
+    const resp = await apiClient.get<Listing>(url);
     return resp.data;
   } catch (ex) {
     console.log(`Error occurred when fetching listing. Error: ${ex}`);

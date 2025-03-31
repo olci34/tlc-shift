@@ -7,7 +7,7 @@ export default withAuth(
     const token = await getToken({ req });
     if (token) {
       if (req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/signup')) {
-        return NextResponse.redirect(new URL('/dashboard', req.url));
+        return NextResponse.redirect(new URL('/', req.url));
       }
 
       return NextResponse.next();

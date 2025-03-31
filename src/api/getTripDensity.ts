@@ -1,5 +1,5 @@
-import axios from 'axios';
 import moment, { Moment } from 'moment';
+import apiClient from './interceptors/apiClient';
 
 export type TripDensityResponse = {
   location_id: number;
@@ -7,9 +7,8 @@ export type TripDensityResponse = {
 };
 
 const getTripDensity = async (startDatetime: Moment, startTime: number, endTime: number) => {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const dateFormat = 'YYYY-MM-DDTHH:mm:ss.000';
-  const tripsURL = new URL(`${API_URL}/trips/density`);
+  const tripsURL = new URL(`/trips/density`);
   startDatetime.set('hour', startTime);
   const endDatetime = moment(startDatetime).set('hour', endTime);
   tripsURL.searchParams.set('startDate', startDatetime.format(dateFormat));
@@ -18,7 +17,7 @@ const getTripDensity = async (startDatetime: Moment, startTime: number, endTime:
   tripsURL.searchParams.set('endTime', endTime.toString());
 
   try {
-    const resp = await axios.get<TripDensityResponse[]>(tripsURL.toString());
+    const resp = await apiClient.get<TripDensityResponse[]>(tripsURL.toString());
     return resp.data;
   } catch (ex) {
     console.log(`Error occurred. Error: ${ex}`);

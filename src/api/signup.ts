@@ -1,8 +1,8 @@
 import { SignupData } from '@/pages/signup-login';
-import axios, { AxiosError } from 'axios';
+import apiClient from './interceptors/apiClient';
+import { AxiosError } from 'axios';
 
 export const signup = async (data: SignupData) => {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const body = {
     email: data.email,
     password: data.password,
@@ -11,7 +11,7 @@ export const signup = async (data: SignupData) => {
   };
 
   try {
-    const resp = await axios.post<boolean>(`${API_URL}/users/signup`, body);
+    const resp = await apiClient.post<boolean>(`/users/signup`, body);
 
     return resp.data;
   } catch (err: AxiosError | any) {
