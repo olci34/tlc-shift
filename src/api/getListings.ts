@@ -8,13 +8,15 @@ export interface ListingResponse {
 }
 
 export const getListings = async (page: number, perPage: number, carFilter: CarFilter = {}) => {
-  const url = new URL(`/listings`);
-  url.searchParams.set('page', page.toString());
-  url.searchParams.set('per_page', perPage.toString());
-  url.searchParams.set('q', JSON.stringify(carFilter));
+  const url = '/listings';
+  const params = new URLSearchParams({
+    page: page.toString(),
+    per_page: perPage.toString(),
+    q: JSON.stringify(carFilter)
+  });
 
   try {
-    const resp = await apiClient.get<ListingResponse>(url.toString());
+    const resp = await apiClient.get<ListingResponse>(`${url}?${params.toString()}`);
     return resp.data;
   } catch (ex) {
     console.log(`Error occurred. Error: ${ex}`);

@@ -1,33 +1,29 @@
 import axios from 'axios';
 import { getSession } from 'next-auth/react';
 
-const ApiClient = () => {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const instance = axios.create();
+const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
-  instance.interceptors.request.use(async (request) => {
-    const session = await getSession();
+apiClient.interceptors.request.use(async (request) => {
+  const session = await getSession();
 
-    if (session && session.user) {
-      request.headers.Authorization = `${session.tokenType} ${session.accessToken}`;
-    }
+  if (session && session.user) {
+    request.headers.Authorization = `${session.tokenType} ${session.accessToken}`;
+  }
 
-    request.baseURL = API_URL;
-    request.headers['Content-Type'] = 'application/json';
-    return request;
-  });
+  return request;
+});
 
-  instance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      console.log(`error`, error);
-      throw new Error(error.response.data.message);
-    }
-  );
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.log(`error`, error);
+    return Promise.reject(new Error(error.response?.data?.message || 'An error occurred'));
+  }
+);
 
-  return instance;
-};
-
-export default ApiClient();
+export default apiClient;
