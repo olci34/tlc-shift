@@ -6,7 +6,7 @@ export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     const token = await getToken({ req });
     if (token) {
-      if (req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/signup')) {
+      if (req.nextUrl.pathname.startsWith('/signup-login')) {
         return NextResponse.redirect(new URL('/', req.url));
       }
 
@@ -18,10 +18,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         //NOTE: We can bring role based authorization logic here.
-        if (
-          req.nextUrl.pathname.startsWith('/login') ||
-          req.nextUrl.pathname.startsWith('/signup')
-        ) {
+        if (req.nextUrl.pathname.startsWith('/signup-login')) {
           return true;
         }
 
@@ -32,5 +29,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/login', '/signup']
+  matcher: ['/signup-login']
 };

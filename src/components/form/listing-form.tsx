@@ -19,6 +19,7 @@ import { USCarBrand } from '@/lib/constants/car-brands';
 import { Listing, ListingImage, Plate, Vehicle } from '@/lib/interfaces/Listing';
 import { createPlateState, createVehicleState } from '@/lib/utils/listing-item-helpers';
 import NumberInputWithCommas from './number-input-with-commas';
+import { createListing } from '@/api/createListing';
 
 export interface ListingFormProps {
   listing?: Listing;
@@ -88,7 +89,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
 
   const submitListing = async () => {
     console.log(listingData);
-    // const res = await createListing(listingData);
+    const res = await createListing(listingData);
   };
 
   return (
