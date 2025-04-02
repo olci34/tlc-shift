@@ -123,6 +123,9 @@ const SignupLogin: React.FC = () => {
 
   const handleLoginSubmit = async () => {
     const creds: LoginData = { email: loginData.email, password: loginData.password };
+    validateLogin('email', loginData.email);
+    validateLogin('password', loginData.password);
+
     const res = await signIn('credentials', {
       ...creds,
       callbackUrl: `/`,
@@ -168,8 +171,10 @@ const SignupLogin: React.FC = () => {
     errors: SignupErrors | LoginErrors
   ): boolean => {
     return (
-      !Object.values(errors).some((error) => error !== null) &&
-      Object.values(data).every((value) => value.trim() !== '')
+      Object.keys(errors).some(
+        (errorCode) =>
+          errorCode !== 'errorMessage' && errors[errorCode as keyof typeof errors] === null
+      ) && Object.values(data).every((value) => value.trim() !== '')
     );
   };
 
@@ -280,11 +285,7 @@ const SignupLogin: React.FC = () => {
           </TabPanel>
           <TabPanel>
             <VStack spacing={4}>
-              <FormControl
-                id="login-email"
-                isRequired
-                isInvalid={!loginData.email && !!loginErrors.email}
-              >
+              <FormControl id="login-email" isRequired isInvalid={!!loginErrors.email}>
                 <FormLabel>Email address</FormLabel>
                 <Input
                   type="email"
@@ -292,7 +293,7 @@ const SignupLogin: React.FC = () => {
                   value={loginData.email}
                   onChange={handleLoginChange}
                 />
-                {loginErrors.email && <FormErrorMessage>{loginErrors.email}</FormErrorMessage>}
+                {!!loginErrors.email && <FormErrorMessage>{loginErrors.email}</FormErrorMessage>}
               </FormControl>
               <FormControl
                 id="login-password"
@@ -320,12 +321,7 @@ const SignupLogin: React.FC = () => {
                   <FormErrorMessage>{loginErrors.password}</FormErrorMessage>
                 )}
               </FormControl>
-              <Button
-                colorScheme="blue"
-                width="full"
-                onClick={handleLoginSubmit}
-                disabled={!isFormValid(loginData, loginErrors)}
-              >
+              <Button colorScheme="blue" width="full" onClick={handleLoginSubmit}>
                 Login
               </Button>
               {loginErrors.errorMessage && (

@@ -41,7 +41,6 @@ const ListingsPage = () => {
 
   const handleFilterChange = (e: React.FormEvent<HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
-    console.log(name, value);
     setCarFilter({ ...carFilter, [name]: value });
   };
 

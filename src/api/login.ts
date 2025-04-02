@@ -19,12 +19,9 @@ export interface Token {
 
 export const login = async (loginData: LoginData) => {
   const url = `/users/login`;
-  const formData = new URLSearchParams();
-  formData.append('username', loginData.email);
-  formData.append('password', loginData.password);
 
   try {
-    const resp = await apiClient.post<LoginResponse>(url, formData.toString());
+    const resp = await apiClient.post<LoginResponse>(url, loginData);
     return resp.data;
   } catch (ex: AxiosError | any) {
     console.log(`Error occurred when login. Error: ${(ex as AxiosError).message}`);

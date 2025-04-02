@@ -24,10 +24,10 @@ import {
 import moment from 'moment';
 import { FeatureCollection } from 'geojson';
 import dynamic from 'next/dynamic';
-import getTripDensity from '@/api/getTripDensity';
 import DateFormInput from '@/components/form/date-form-input';
 import { debounce } from 'lodash';
 import { TimeIcon } from '@chakra-ui/icons';
+import { getTripDensity } from '@/api/getTripDensity';
 const GeoMap = dynamic(() => import('../components/geomap/geomap'), { ssr: false });
 
 export default function Home() {
@@ -79,7 +79,8 @@ export default function Home() {
   useEffect(() => {
     const fetchTrips = debounce(async () => {
       setIsLoading(true);
-      const resp = await getTripDensity(searchDate, startTime, endTime);
+      const endDate = moment(searchDate).set('hour', endTime);
+      const resp = await getTripDensity(searchDate, endDate, startTime, endTime);
 
       if (resp) {
         const density = new Map<number, number>();
