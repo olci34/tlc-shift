@@ -4,6 +4,15 @@ import { LoginData } from '@/pages/signup-login';
 import { login } from '@/api/login';
 import { authConfig } from '../../../../auth.config';
 
+export interface AuthUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  accessToken: string;
+  tokenType: string;
+}
+
 export const authOptions = {
   ...authConfig,
   providers: [
@@ -20,9 +29,10 @@ export const authOptions = {
             id: loginData.user.id,
             firstName: loginData.user.first_name,
             lastName: loginData.user.last_name,
+            email: loginData.user.email,
             accessToken: loginData.access_token,
             tokenType: loginData.token_type
-          };
+          } as AuthUser;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           throw Error('Something went wrong while login');

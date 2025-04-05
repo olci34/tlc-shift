@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { Session } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { getSession } from 'next-auth/react';
 
 const apiClient = axios.create({
@@ -10,9 +12,8 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(async (request) => {
   const session = await getSession();
-
-  if (session && session.user) {
-    request.headers.Authorization = `${session.tokenType} ${session.accessToken}`;
+  if (session && session.user?.accessToken) {
+    request.headers.Authorization = `${session.user.tokenType} ${session.user.accessToken}`;
   }
 
   return request;

@@ -25,6 +25,7 @@ import NavLinkItem from './nav-link-item';
 import { MoonIcon, SunIcon, HamburgerIcon } from '@chakra-ui/icons';
 import { signOut, useSession } from 'next-auth/react';
 import { AUTH_STATUS } from '@/lib/utils/auth';
+import AccountMenu from './account-menu';
 
 const NavBar = () => {
   const router = useRouter();
@@ -139,7 +140,7 @@ const NavBar = () => {
               Login
             </NavLinkItem>
           ) : (
-            <Button onClick={logout}>Logout</Button>
+            <AccountMenu />
           )}
           {!isHamburger && (
             <IconButton

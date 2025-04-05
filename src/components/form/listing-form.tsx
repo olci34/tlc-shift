@@ -88,7 +88,6 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
   };
 
   const submitListing = async () => {
-    console.log(listingData);
     const res = await createListing(listingData);
   };
 
