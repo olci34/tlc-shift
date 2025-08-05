@@ -1,4 +1,12 @@
-import { Menu, MenuButton, MenuList, MenuItem, IconButton, Button } from '@chakra-ui/react';
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  Button,
+  LinkBox
+} from '@chakra-ui/react';
 import { FaUserCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
@@ -26,7 +34,7 @@ const AccountMenu = () => {
           <MenuItem>My Listings</MenuItem>
         </Link>{' '}
         <MenuItem>
-          <Button onClick={logout}>Logout</Button>
+          <LinkBox onClick={logout}>Logout</LinkBox>
         </MenuItem>
       </MenuList>
     </Menu>

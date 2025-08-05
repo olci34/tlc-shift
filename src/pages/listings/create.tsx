@@ -5,7 +5,7 @@ import React from 'react';
 const CreateListingPage = () => {
   return (
     <Stack direction="column">
-      <Heading>New Listing</Heading>
+      <Heading>New Rental Listing</Heading>
       <ListingForm />
     </Stack>
   );

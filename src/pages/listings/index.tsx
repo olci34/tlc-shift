@@ -3,7 +3,7 @@ import { ListingCard } from '@/components/listing/listing-card';
 import Paginator from '@/components/paginator/paginator';
 import { USCarBrand } from '@/lib/constants/car-brands';
 import { Listing } from '@/lib/interfaces/Listing';
-import { Search2Icon } from '@chakra-ui/icons';
+import { AddIcon, Search2Icon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -75,6 +75,14 @@ const ListingsPage = () => {
       <Button variant="ghost" onClick={onToggle}>
         <Icon as={IoFilter} marginRight={1} />
         Filter
+      </Button>
+      <Button
+        float="right"
+        leftIcon={<AddIcon />}
+        backgroundColor={useColorModeValue('green.600', 'green.300')}
+        onClick={() => router.push('/listings/create')}
+      >
+        Create Listing
       </Button>
 
       {/* Filters */}

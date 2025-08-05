@@ -10,22 +10,26 @@ import {
   VStack,
   InputGroup,
   InputLeftElement,
-  Button
+  Button,
+  FormErrorMessage
 } from '@chakra-ui/react';
 import { USStateCode } from '@/lib/constants/state-codes';
-import { CldImage } from 'next-cloudinary';
 import CloudinaryUploader from '../cloudinary/cloudinary-uploader';
 import { USCarBrand } from '@/lib/constants/car-brands';
 import { Listing, ListingImage, Plate, Vehicle } from '@/lib/interfaces/Listing';
 import { createPlateState, createVehicleState } from '@/lib/utils/listing-item-helpers';
 import NumberInputWithCommas from './number-input-with-commas';
 import { createListing } from '@/api/createListing';
+import { CldImageBox } from '../listing/cld-image-box';
+import { deletePhoto } from '@/api/deletePhoto';
+import { useRouter } from 'next/router';
 
 export interface ListingFormProps {
   listing?: Listing;
 }
 
 const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
+  const router = useRouter();
   const initialListingState: Listing = {
     title: listing?.title ?? '',
     description: listing?.description ?? '',
@@ -43,6 +47,8 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
   };
 
   const [listingData, setListingData] = useState<Listing>(listing ?? initialListingState);
+  const [titleError, setTitleError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
 
   const handleListingChange = (
     e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -58,6 +64,13 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
     }
 
     setListingData(updatedState);
+
+    if (e.currentTarget.name === 'title') {
+      setTitleError('');
+    }
+    if (e.currentTarget.name === 'description') {
+      setDescriptionError('');
+    }
   };
 
   const handleLocationChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -87,13 +100,45 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
     setListingData((prev) => ({ ...prev, images: [...prev.images, uploadedImg] }));
   };
 
+  const deleteCldPhoto = async (cldId: string) => {
+    const res = await deletePhoto(cldId);
+    if (res) {
+      const imgs = listingData.images.filter((img) => img.cld_public_id !== cldId);
+      setListingData((prev) => ({ ...prev, images: imgs }));
+    }
+  };
+
+  const cancelListing = () => {
+    // TODO: Delete uploaded photos from cloudinary
+    router.push('/');
+  };
+
+  const isListingFormValid = () => {
+    let isValid = false;
+
+    if (listingData.title.length < 3) {
+      setTitleError('Title must be at least 3 characters long.');
+      isValid = true;
+    }
+
+    if (listingData.description.length < 25) {
+      setDescriptionError('Description must be at least 25 characters long.');
+      isValid = true;
+    }
+
+    return isValid;
+  };
+
   const submitListing = async () => {
-    const res = await createListing(listingData);
+    if (!isListingFormValid()) {
+      const res = await createListing(listingData);
+      if (res) router.push(`/listings/${res._id}`);
+    }
   };
 
   return (
     <Stack>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={!!titleError}>
         <FormLabel>Title</FormLabel>
         <Input
           variant="outline"
@@ -103,25 +148,28 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
           minLength={3}
           maxLength={42}
         />
+        <FormErrorMessage>{titleError}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={!!descriptionError}>
         <FormLabel>Description</FormLabel>
         <Textarea
           variant="outline"
           value={listingData?.description}
           name="description"
           onChange={handleListingChange}
-          minLength={16}
+          minLength={25}
           maxLength={2000}
         />
+        <FormErrorMessage>{descriptionError}</FormErrorMessage>
       </FormControl>
-      <FormControl>
+      <FormControl isRequired>
         <FormLabel>Transaction</FormLabel>
         <Select
           variant="outline"
           value={listingData?.transaction_type}
           name="transaction_type"
           onChange={handleListingChange}
+          disabled
         >
           <option value={'Rental'}>Rental</option>
           <option value={'Sale'}>Sale</option>
@@ -298,14 +346,15 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
             padding={2}
           >
             {listingData.images.map((img, idx) => (
-              <CldImage
-                key={`${img.name}-${idx}`}
+              <CldImageBox
                 src={img.cld_public_id}
+                key={`${img.name}-${idx}`}
                 width={100}
                 height={100}
                 crop="fill"
-                alt=""
+                alt={`Listing Image ${idx + 1}`}
                 sizes="100vw"
+                onDelete={() => deleteCldPhoto(img.cld_public_id)}
               />
             ))}
           </Stack>
@@ -313,7 +362,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
       </VStack>
       <Stack direction={{ base: 'column', md: 'row' }}>
         <Button onClick={submitListing}>Create Listing</Button>
-        <Button>Cancel</Button>
+        <Button onClick={cancelListing}>Cancel</Button>
       </Stack>
     </Stack>
   );

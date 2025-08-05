@@ -5,29 +5,30 @@ import { getToken } from 'next-auth/jwt';
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     const token = await getToken({ req });
+    const { pathname } = req.nextUrl;
+
     if (token) {
-      if (req.nextUrl.pathname.startsWith('/signup-login')) {
+      if (pathname.startsWith('/signup-login')) {
         return NextResponse.redirect(new URL('/', req.url));
       }
-
       return NextResponse.next();
     }
-    return null;
+
+    if (pathname !== '/signup-login') {
+      return NextResponse.redirect(new URL('/signup-login', req.url));
+    }
+
+    return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token, req }) => {
-        //NOTE: We can bring role based authorization logic here.
-        if (req.nextUrl.pathname.startsWith('/signup-login')) {
-          return true;
-        }
-
-        return !!token;
+      authorized: ({ token }) => {
+        return true;
       }
     }
   }
 );
 
 export const config = {
-  matcher: ['/signup-login']
+  matcher: ['/signup-login', '/listings/create']
 };
