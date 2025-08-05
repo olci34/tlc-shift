@@ -5,7 +5,7 @@ import { USCarBrand } from '../constants/car-brands';
 export const createVehicleState = () => {
   return {
     make: USCarBrand.Toyota,
-    model: '',
+    model: 'Camry',
     year: moment().year(),
     mileage: 0,
     color: '',

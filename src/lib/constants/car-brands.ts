@@ -31,7 +31,7 @@ export enum USCarBrand {
   AlfaRomeo = 'Alfa Romeo'
 }
 
-export const carModels = {
+export const CarModels = {
   [USCarBrand.Toyota]: [
     'Camry',
     'Corolla',

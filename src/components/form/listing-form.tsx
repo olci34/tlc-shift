@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { USStateCode } from '@/lib/constants/state-codes';
 import CloudinaryUploader from '../cloudinary/cloudinary-uploader';
-import { USCarBrand } from '@/lib/constants/car-brands';
+import { CarModels, USCarBrand } from '@/lib/constants/car-brands';
 import { Listing, ListingImage, Plate, Vehicle } from '@/lib/interfaces/Listing';
 import { createPlateState, createVehicleState } from '@/lib/utils/listing-item-helpers';
 import NumberInputWithCommas from './number-input-with-commas';
@@ -49,6 +49,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
   const [listingData, setListingData] = useState<Listing>(listing ?? initialListingState);
   const [titleError, setTitleError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
+  const [priceError, setPriceError] = useState('');
 
   const handleListingChange = (
     e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -71,6 +72,9 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
     if (e.currentTarget.name === 'description') {
       setDescriptionError('');
     }
+    if (e.currentTarget.name === 'price') {
+      setPriceError('');
+    }
   };
 
   const handleLocationChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -84,6 +88,10 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
 
   const handleItemChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
     const updatedItem = { ...listingData.item, [e.currentTarget.name]: e.currentTarget.value };
+
+    if (e.currentTarget.name === 'make') {
+      updatedItem.model = CarModels[e.currentTarget.value as keyof typeof CarModels][0];
+    }
 
     setListingData({ ...listingData, item: updatedItem });
   };
@@ -114,23 +122,28 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
   };
 
   const isListingFormValid = () => {
-    let isValid = false;
+    let isValid = true;
 
     if (listingData.title.length < 3) {
       setTitleError('Title must be at least 3 characters long.');
-      isValid = true;
+      isValid = false;
     }
 
     if (listingData.description.length < 25) {
       setDescriptionError('Description must be at least 25 characters long.');
-      isValid = true;
+      isValid = false;
+    }
+
+    if (!listingData.price || !Number(listingData.price)) {
+      setPriceError('Price should be greater than $ 0.00');
+      isValid = false;
     }
 
     return isValid;
   };
 
   const submitListing = async () => {
-    if (!isListingFormValid()) {
+    if (isListingFormValid()) {
       const res = await createListing(listingData);
       if (res) router.push(`/listings/${res._id}`);
     }
@@ -208,12 +221,20 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
             </FormControl>
             <FormControl>
               <FormLabel>Model</FormLabel>
-              <Input
+              <Select
                 variant="outline"
                 name="model"
                 value={(listingData?.item as Vehicle).model}
                 onChange={handleItemChange}
-              />
+              >
+                {CarModels[listingData.item.make as keyof typeof CarModels]?.map(
+                  (model: string) => (
+                    <option value={model} key={model}>
+                      {model}
+                    </option>
+                  )
+                )}
+              </Select>
             </FormControl>
             <FormControl>
               <FormLabel>Year</FormLabel>
@@ -284,7 +305,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
           </>
         )}
       </Stack>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={!!priceError}>
         <FormLabel>Price</FormLabel>
         <InputGroup>
           <InputLeftElement>$</InputLeftElement>
@@ -294,10 +315,11 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
             value={listingData?.price}
             name="price"
             onChange={handleListingChange}
-            min={0}
+            min={1}
             placeholder="0"
           />
         </InputGroup>
+        <FormErrorMessage>{priceError}</FormErrorMessage>
       </FormControl>
       <Stack direction={{ base: 'column', md: 'row' }}>
         <FormControl>
