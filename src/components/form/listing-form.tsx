@@ -171,7 +171,9 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
           name="description"
           onChange={handleListingChange}
           minLength={25}
-          maxLength={2000}
+          maxLength={1000}
+          whiteSpace="pre-wrap"
+          wrap="soft"
         />
         <FormErrorMessage>{descriptionError}</FormErrorMessage>
       </FormControl>

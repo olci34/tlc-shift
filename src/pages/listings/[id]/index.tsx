@@ -167,7 +167,9 @@ const ListingViewPage: FC = () => {
         <Box>
           <Heading size="md">Details</Heading>
           <Box justifyContent="space-between">
-            <Box marginTop={2}>{listing?.description}</Box>
+            <Text marginTop={2} whiteSpace="pre-wrap">
+              {listing?.description}
+            </Text>
             <Text fontSize="sm" color="#888D8B" position="relative">
               <Icon as={FaLocationDot} display="inline" /> {listing?.location.county}{' '}
               {listing?.location.state}
