@@ -115,6 +115,8 @@ const GeoMap: FC<GeoMapProps> = ({ geoData, tripDensity, isLoading }) => {
       transition="filter 0.3s ease"
       backgroundColor="red.200"
       borderRadius="2xl"
+      position="relative"
+      zIndex={0}
     >
       {!mapReady && <Skeleton width="full" height="full" />}
       <MapContainer

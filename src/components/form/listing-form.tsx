@@ -50,6 +50,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
   const [titleError, setTitleError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
   const [priceError, setPriceError] = useState('');
+  const [imagesError, setImagesError] = useState('');
 
   const handleListingChange = (
     e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -106,6 +107,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
     } as ListingImage;
 
     setListingData((prev) => ({ ...prev, images: [...prev.images, uploadedImg] }));
+    setImagesError('');
   };
 
   const deleteCldPhoto = async (cldId: string) => {
@@ -136,6 +138,11 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
 
     if (!listingData.price || !Number(listingData.price)) {
       setPriceError('Price should be greater than $ 0.00');
+      isValid = false;
+    }
+
+    if (!listingData.images || listingData.images.length === 0) {
+      setImagesError('Please upload at least one photo.');
       isValid = false;
     }
 
@@ -359,30 +366,34 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
         </FormControl>
       </Stack>
       <VStack>
-        <CloudinaryUploader handleCldUploadSuccess={handleCldUploadSuccess} />
-        {listingData.images && listingData.images.length && (
-          <Stack
-            direction="row"
-            alignItems="start"
-            gap={2}
-            border="1px"
-            borderRadius="lg"
-            padding={2}
-          >
-            {listingData.images.map((img, idx) => (
-              <CldImageBox
-                src={img.cld_public_id}
-                key={`${img.name}-${idx}`}
-                width={100}
-                height={100}
-                crop="fill"
-                alt={`Listing Image ${idx + 1}`}
-                sizes="100vw"
-                onDelete={() => deleteCldPhoto(img.cld_public_id)}
-              />
-            ))}
-          </Stack>
-        )}
+        <FormControl isRequired isInvalid={!!imagesError} width="full">
+          <FormLabel>Photos</FormLabel>
+          <CloudinaryUploader handleCldUploadSuccess={handleCldUploadSuccess} />
+          {listingData.images && listingData.images.length > 0 && (
+            <Stack
+              direction="row"
+              alignItems="start"
+              gap={2}
+              border="1px"
+              borderRadius="lg"
+              padding={2}
+            >
+              {listingData.images.map((img, idx) => (
+                <CldImageBox
+                  src={img.cld_public_id}
+                  key={`${img.name}-${idx}`}
+                  width={100}
+                  height={100}
+                  crop="fill"
+                  alt={`Listing Image ${idx + 1}`}
+                  sizes="100vw"
+                  onDelete={() => deleteCldPhoto(img.cld_public_id)}
+                />
+              ))}
+            </Stack>
+          )}
+          <FormErrorMessage>{imagesError}</FormErrorMessage>
+        </FormControl>
       </VStack>
       <Stack direction={{ base: 'column', md: 'row' }}>
         <Button onClick={submitListing}>Create Listing</Button>
