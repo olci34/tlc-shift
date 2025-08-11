@@ -139,10 +139,9 @@ const ListingViewPage: FC = () => {
         <Stack
           direction={{ base: 'row', md: 'column' }}
           width={{ base: 'full', sm: 300 }}
-          columnGap={6}
-          rowGap={0}
+          columnGap={8}
         >
-          <Box>
+          <Stack>
             <HStack>
               <Icon as={FaCar} boxSize={{ md: 6 }} />
               <Text>
@@ -153,8 +152,8 @@ const ListingViewPage: FC = () => {
               <Icon as={FaRoad} boxSize={{ md: 6 }} />
               <Text>{listing?.item.mileage?.toLocaleString()} mil.</Text>
             </HStack>
-          </Box>
-          <Box>
+          </Stack>
+          <Stack>
             <HStack>
               <Icon as={FaHammer} boxSize={{ md: 6 }} />
               <Text>{listing?.item.year}</Text>
@@ -163,7 +162,7 @@ const ListingViewPage: FC = () => {
               <Icon as={FaGasPump} boxSize={{ md: 6 }} />
               <Text>{listing?.item.fuel}</Text>
             </HStack>
-          </Box>
+          </Stack>
         </Stack>
         <Box>
           <Heading size="md">Details</Heading>
