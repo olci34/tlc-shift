@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { Session } from 'next-auth';
-import { getToken } from 'next-auth/jwt';
 import { getSession } from 'next-auth/react';
 
 const apiClient = axios.create({

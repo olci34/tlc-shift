@@ -129,8 +129,8 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
       isValid = false;
     }
 
-    if (listingData.description.length < 25) {
-      setDescriptionError('Description must be at least 25 characters long.');
+    if (listingData.description.length < 25 || listingData.description.length > 1000) {
+      setDescriptionError('Description length must be more than 25 characters or less than 1000.');
       isValid = false;
     }
 

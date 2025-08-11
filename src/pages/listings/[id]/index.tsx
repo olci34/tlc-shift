@@ -138,7 +138,7 @@ const ListingViewPage: FC = () => {
       <Stack direction={{ base: 'column', md: 'row' }} marginY={{ base: 6, sm: 10 }} rowGap={6}>
         <Stack
           direction={{ base: 'row', md: 'column' }}
-          width={{ base: 'full', sm: 300 }}
+          minWidth={{ base: 'full', sm: 300 }}
           columnGap={8}
         >
           <Stack>
@@ -168,8 +168,9 @@ const ListingViewPage: FC = () => {
           <Heading size="md">Details</Heading>
           <Box justifyContent="space-between">
             <Box marginTop={2}>{listing?.description}</Box>
-            <Text fontSize="sm" color="#888D8B">
-              <Icon as={FaLocationDot} display="inline" /> {listing?.location.county}
+            <Text fontSize="sm" color="#888D8B" position="relative">
+              <Icon as={FaLocationDot} display="inline" /> {listing?.location.county}{' '}
+              {listing?.location.state}
             </Text>
           </Box>
         </Box>
