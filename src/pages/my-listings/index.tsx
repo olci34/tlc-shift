@@ -5,12 +5,17 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { ListingCard } from '@/components/listing/listing-card';
+import Paginator from '@/components/paginator/paginator';
 
 const UserListingsPage: FC = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [listings, setListings] = useState<Listing[]>([]);
+  const numPerPage = 21;
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const totalPages = Math.ceil(total / numPerPage);
 
   const userId = useMemo(() => session?.user && (session.user as any).id, [session]);
 
@@ -22,33 +27,38 @@ const UserListingsPage: FC = () => {
     if (status === 'authenticated' && userId) {
       const fetchListings = async () => {
         setIsLoading(true);
-        const resp = await getUserListings(userId);
+        const resp = await getUserListings(userId, page, numPerPage);
         if (resp) {
           setListings(resp.listings);
+          setTotal(resp.total);
         }
         setIsLoading(false);
       };
       fetchListings();
     }
-  }, [status, userId, router]);
+  }, [status, userId, router, page]);
 
   return (
     <Box>
       <Heading my={4}>My Listings</Heading>
-      <Stack spacing={3}>
-        {isLoading
-          ? Array.from({ length: 3 }).map((_, idx) => (
-              <Skeleton key={`skt-${idx}`} height={150} borderRadius="md" />
-            ))
-          : listings.map((listing) => (
-              <Box key={listing._id} borderWidth="1px" borderRadius="md" overflow="hidden">
+      <Box paddingY={2}>
+        <Stack direction={{ base: 'column', sm: 'row' }} wrap="wrap" justify="flex-start">
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, idx) => (
+                <Skeleton key={`skt-${idx}`} height={150} borderRadius="md" />
+              ))
+            : listings?.map((listing) => (
                 <ListingCard
+                  key={listing._id}
                   listing={listing}
-                  onClick={() => listing._id && router.push(`/listings/${listing._id}`)}
+                  onClick={() => {
+                    if (listing._id) router.push(`/listings/${listing._id}`);
+                  }}
                 />
-              </Box>
-            ))}
-      </Stack>
+              ))}
+        </Stack>
+      </Box>
+      <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
     </Box>
   );
 };
