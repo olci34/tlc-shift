@@ -42,4 +42,5 @@ export interface Listing {
   location: ListingLocation;
   active: boolean;
   images: ListingImage[];
+  user_id?: string;
 }

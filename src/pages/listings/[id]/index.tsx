@@ -1,6 +1,6 @@
 import { getListing } from '@/api/getListing';
 import { Listing } from '@/lib/interfaces/Listing';
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
+import { ArrowLeftIcon, ArrowRightIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -10,18 +10,26 @@ import {
   Icon,
   Skeleton,
   Stack,
-  Text
+  Text,
+  useColorModeValue,
+  Show,
+  VStack
 } from '@chakra-ui/react';
 import { CldImage } from 'next-cloudinary';
 import { useRouter } from 'next/router';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useMemo } from 'react';
 import { FaCar, FaHammer, FaRoad, FaGasPump, FaLocationDot } from 'react-icons/fa6';
+import { useSession } from 'next-auth/react';
 
 const ListingViewPage: FC = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [listing, setListing] = useState<Listing>();
   const { id } = router.query;
   const [imageIdx, setImageIdx] = useState<number>(0);
+  const loggedInUserId = useMemo(() => (session?.user as any)?.id, [session]);
+  const editBtnBg = useColorModeValue('green.600', 'green.300');
+  const deleteBtnBg = useColorModeValue('red.600', 'red.300');
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -34,10 +42,38 @@ const ListingViewPage: FC = () => {
 
   return (
     <Box padding={{ base: 0, sm: 4 }}>
-      <Heading size="lg">{listing?.title}</Heading>
-      <Text color="#888D8B" fontSize="sm">
-        Listed on April 20
-      </Text>
+      <HStack>
+        <Box>
+          <Heading size="lg">{listing?.title}</Heading>
+          <Text color="#888D8B" fontSize="sm">
+            Listed on April 20
+          </Text>
+        </Box>
+        <Box ml="auto">
+          <Show above="sm">
+            {listing?.user_id && loggedInUserId === listing.user_id && (
+              <HStack>
+                <Button
+                  leftIcon={<EditIcon />}
+                  backgroundColor={editBtnBg}
+                  onClick={() => router.push(`/listings/${listing?._id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  leftIcon={<DeleteIcon />}
+                  backgroundColor={deleteBtnBg}
+                  onClick={() => {
+                    // TODO: implement delete
+                  }}
+                >
+                  Delete
+                </Button>
+              </HStack>
+            )}
+          </Show>
+        </Box>
+      </HStack>
       <Box width={'full'} my={4}>
         <Box
           position="relative"
@@ -175,6 +211,28 @@ const ListingViewPage: FC = () => {
               {listing?.location.state}
             </Text>
           </Box>
+          <Show below="sm">
+            {listing?.user_id && loggedInUserId === listing.user_id && (
+              <VStack mt={3} align="stretch">
+                <Button
+                  leftIcon={<EditIcon />}
+                  backgroundColor={editBtnBg}
+                  onClick={() => router.push(`/listings/${listing?._id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  leftIcon={<DeleteIcon />}
+                  backgroundColor={deleteBtnBg}
+                  onClick={() => {
+                    // TODO: implement delete
+                  }}
+                >
+                  Delete
+                </Button>
+              </VStack>
+            )}
+          </Show>
         </Box>
       </Stack>
 

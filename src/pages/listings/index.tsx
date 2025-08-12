@@ -82,7 +82,7 @@ const ListingsPage = () => {
         backgroundColor={useColorModeValue('green.600', 'green.300')}
         onClick={() => router.push('/listings/create')}
       >
-        Create Listing
+        New Listing
       </Button>
 
       {/* Filters */}
