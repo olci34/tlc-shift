@@ -26,9 +26,11 @@ import { useRouter } from 'next/router';
 
 export interface ListingFormProps {
   listing?: Listing;
+  mode?: 'create' | 'edit';
+  onSubmit?: (listing: Listing) => Promise<void> | void;
 }
 
-const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
+const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onSubmit }) => {
   const router = useRouter();
   const initialListingState: Listing = {
     title: listing?.title ?? '',
@@ -151,6 +153,10 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
 
   const submitListing = async () => {
     if (isListingFormValid()) {
+      if (mode === 'edit' && onSubmit) {
+        await onSubmit(listingData);
+        return;
+      }
       const res = await createListing(listingData);
       if (res) router.push(`/listings/${res._id}`);
     }
@@ -396,7 +402,11 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing }) => {
         </FormControl>
       </VStack>
       <Stack direction={{ base: 'column', md: 'row' }}>
-        <Button onClick={submitListing}>Create Listing</Button>
+        {mode === 'create' ? (
+          <Button onClick={submitListing}>Create Listing</Button>
+        ) : (
+          <Button onClick={submitListing}>Save Listing</Button>
+        )}
         <Button onClick={cancelListing}>Cancel</Button>
       </Stack>
     </Stack>
