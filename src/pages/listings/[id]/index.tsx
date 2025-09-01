@@ -13,13 +13,15 @@ import {
   Text,
   useColorModeValue,
   Show,
-  VStack
+  VStack,
+  useDisclosure
 } from '@chakra-ui/react';
 import { CldImage } from 'next-cloudinary';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useState, useMemo } from 'react';
-import { FaCar, FaHammer, FaRoad, FaGasPump, FaLocationDot } from 'react-icons/fa6';
+import { FaCar, FaHammer, FaRoad, FaGasPump, FaLocationDot, FaEnvelope } from 'react-icons/fa6';
 import { useSession } from 'next-auth/react';
+import ContactModal from '@/components/contact-modal';
 
 const ListingViewPage: FC = () => {
   const router = useRouter();
@@ -30,6 +32,8 @@ const ListingViewPage: FC = () => {
   const loggedInUserId = useMemo(() => (session?.user as any)?.id, [session]);
   const editBtnBg = useColorModeValue('green.600', 'green.300');
   const deleteBtnBg = useColorModeValue('red.600', 'red.300');
+  const priceColor = useColorModeValue('green.600', 'green.300');
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -43,12 +47,30 @@ const ListingViewPage: FC = () => {
   return (
     <Box padding={{ base: 0, sm: 4 }}>
       <HStack>
-        <Box>
+        <Box flex={1}>
           <Heading size="lg">{listing?.title}</Heading>
           <Text color="#888D8B" fontSize="sm">
             Listed on April 20
           </Text>
+          <Show below="md">
+            <Text color={priceColor} fontWeight={800} fontSize="2xl" mt={2}>
+              ${listing?.price}
+              <Text as="span" color="#888D8B" fontWeight="normal" fontSize="lg">
+                {' '}/ week
+              </Text>
+            </Text>
+          </Show>
         </Box>
+        <Show above="md">
+          <Box>
+            <Text color={priceColor} fontWeight={800} fontSize="2xl">
+              ${listing?.price}
+              <Text as="span" color="#888D8B" fontWeight="normal" fontSize="lg">
+                {' '}/ week
+              </Text>
+            </Text>
+          </Box>
+        </Show>
         <Box ml="auto">
           <Show above="sm">
             {listing?.user_id && loggedInUserId === listing.user_id && (
@@ -201,7 +223,18 @@ const ListingViewPage: FC = () => {
           </Stack>
         </Stack>
         <Box>
-          <Heading size="md">Details</Heading>
+          <HStack justify="space-between" align="center" mb={4}>
+            <Heading size="md">Details</Heading>
+            <Button
+              leftIcon={<Icon as={FaEnvelope} />}
+              colorScheme="blue"
+              variant="outline"
+              size="sm"
+              onClick={onOpen}
+            >
+              Contact
+            </Button>
+          </HStack>
           <Box justifyContent="space-between">
             <Text marginTop={2} whiteSpace="pre-wrap">
               {listing?.description}
@@ -237,6 +270,8 @@ const ListingViewPage: FC = () => {
       </Stack>
 
       <Divider />
+
+      <ContactModal isOpen={isOpen} onClose={onClose} contact={listing?.contact} />
     </Box>
   );
 };

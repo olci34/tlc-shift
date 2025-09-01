@@ -29,6 +29,11 @@ export interface ListingLocation {
   state: string;
 }
 
+export interface ListingContact {
+  phone: string;
+  email: string;
+}
+
 export interface Listing {
   _id?: string;
   title: string;
@@ -40,6 +45,7 @@ export interface Listing {
   price: number;
 
   location: ListingLocation;
+  contact: ListingContact;
   active: boolean;
   images: ListingImage[];
   user_id?: string;

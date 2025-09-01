@@ -19,6 +19,6 @@ export const getListings = async (page: number, perPage: number, carFilter: CarF
     const resp = await apiClient.get<ListingResponse>(`${url}?${params.toString()}`);
     return resp.data;
   } catch (ex) {
-    console.log(`Error occurred. Error: ${ex}`);
+    console.log(`Error occurred. Errorr: ${ex}`);
   }
 };

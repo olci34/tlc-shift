@@ -16,7 +16,7 @@ import {
 import { USStateCode } from '@/lib/constants/state-codes';
 import CloudinaryUploader from '../cloudinary/cloudinary-uploader';
 import { CarModels, USCarBrand } from '@/lib/constants/car-brands';
-import { Listing, ListingImage, Plate, Vehicle } from '@/lib/interfaces/Listing';
+import { Listing, ListingImage, Plate, Vehicle, ListingContact } from '@/lib/interfaces/Listing';
 import { createPlateState, createVehicleState } from '@/lib/utils/listing-item-helpers';
 import NumberInputWithCommas from './number-input-with-commas';
 import { createListing } from '@/api/createListing';
@@ -45,6 +45,10 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
       city: listing?.location?.city ?? '',
       state: listing?.location?.state ?? USStateCode.NY
     },
+    contact: {
+      phone: listing?.contact?.phone ?? '',
+      email: listing?.contact?.email ?? ''
+    },
     images: listing?.images ?? []
   };
 
@@ -52,6 +56,8 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
   const [titleError, setTitleError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
   const [priceError, setPriceError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [imagesError, setImagesError] = useState('');
 
   const handleListingChange = (
@@ -87,6 +93,40 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
     };
 
     setListingData({ ...listingData, location: updatedLocation });
+  };
+
+  const formatPhoneNumber = (value: string): string => {
+    const digits = value.replace(/\D/g, '');
+
+    if (digits.length <= 3) {
+      return digits;
+    } else if (digits.length <= 6) {
+      return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    } else {
+      return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+    }
+  };
+
+  const handleContactChange = (e: React.FormEvent<HTMLInputElement>) => {
+    let value = e.currentTarget.value;
+
+    if (e.currentTarget.name === 'phone') {
+      value = formatPhoneNumber(value);
+    }
+
+    const updatedContact = {
+      ...listingData.contact,
+      [e.currentTarget.name]: value
+    };
+
+    setListingData({ ...listingData, contact: updatedContact });
+
+    if (e.currentTarget.name === 'phone') {
+      setPhoneError('');
+    }
+    if (e.currentTarget.name === 'email') {
+      setEmailError('');
+    }
   };
 
   const handleItemChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -140,6 +180,20 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
 
     if (!listingData.price || !Number(listingData.price)) {
       setPriceError('Price should be greater than $ 0.00');
+      isValid = false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!listingData.contact.email || !emailRegex.test(listingData.contact.email)) {
+      setEmailError('Please enter a valid email address.');
+      isValid = false;
+    }
+
+    // Phone validation (US phone number format)
+    const phoneDigits = listingData.contact.phone.replace(/\D/g, '');
+    if (!listingData.contact.phone || phoneDigits.length !== 10) {
+      setPhoneError('Please enter a valid 10-digit phone number.');
       isValid = false;
     }
 
@@ -369,6 +423,32 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
               </option>
             ))}
           </Select>
+        </FormControl>
+      </Stack>
+      <Stack direction={{ base: 'column', md: 'row' }}>
+        <FormControl isRequired isInvalid={!!phoneError}>
+          <FormLabel>Phone Number</FormLabel>
+          <Input
+            variant="outline"
+            value={listingData?.contact.phone}
+            name="phone"
+            type="tel"
+            onChange={handleContactChange}
+            placeholder="(555) 123-4567"
+          />
+          <FormErrorMessage>{phoneError}</FormErrorMessage>
+        </FormControl>
+        <FormControl isRequired isInvalid={!!emailError}>
+          <FormLabel>Email Address</FormLabel>
+          <Input
+            variant="outline"
+            value={listingData?.contact.email}
+            name="email"
+            type="email"
+            onChange={handleContactChange}
+            placeholder="example@email.com"
+          />
+          <FormErrorMessage>{emailError}</FormErrorMessage>
         </FormControl>
       </Stack>
       <VStack>
