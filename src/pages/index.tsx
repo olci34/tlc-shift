@@ -172,7 +172,13 @@ export default function Home() {
           </HStack>
         </Stack>
 
-        <Box backgroundColor="yellow.200" width="full" height="full" borderRadius="2xl">
+        <Box
+          backgroundColor="yellow.200"
+          width="full"
+          height="full"
+          borderRadius="2xl"
+          marginBottom={6}
+        >
           <GeoMap geoData={geoData} tripDensity={tripDensity} isLoading={isLoading} />
           {isLoading && (
             <Stack direction="column" position="absolute" top="50%" left="50%" zIndex={1000}>
