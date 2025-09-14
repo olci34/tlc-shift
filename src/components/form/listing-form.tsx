@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -14,23 +14,20 @@ import {
   FormErrorMessage
 } from '@chakra-ui/react';
 import { USStateCode } from '@/lib/constants/state-codes';
-import CloudinaryUploader from '../cloudinary/cloudinary-uploader';
+import ImageUploader from '../cloudinary/image-uploader';
 import { CarModels, USCarBrand } from '@/lib/constants/car-brands';
-import { Listing, ListingImage, Plate, Vehicle, ListingContact } from '@/lib/interfaces/Listing';
+import { Listing, ListingImage, Plate, Vehicle } from '@/lib/interfaces/Listing';
 import { createPlateState, createVehicleState } from '@/lib/utils/listing-item-helpers';
 import NumberInputWithCommas from './number-input-with-commas';
-import { createListing } from '@/api/createListing';
-import { CldImageBox } from '../listing/cld-image-box';
-import { deletePhoto } from '@/api/deletePhoto';
+import { ImagePreview } from '../cloudinary/local-image-preview';
 import { useRouter } from 'next/router';
 
 export interface ListingFormProps {
   listing?: Listing;
-  mode?: 'create' | 'edit';
-  onSubmit?: (listing: Listing) => Promise<void> | void;
+  onSubmit: (listing: Listing) => Promise<void> | void;
 }
 
-const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onSubmit }) => {
+const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
   const router = useRouter();
   const initialListingState: Listing = {
     title: listing?.title ?? '',
@@ -49,7 +46,9 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
       phone: listing?.contact?.phone ?? '',
       email: listing?.contact?.email ?? ''
     },
-    images: listing?.images ?? []
+    images: listing?.images ?? [],
+    created_at: listing?.created_at,
+    updated_at: listing?.updated_at
   };
 
   const [listingData, setListingData] = useState<Listing>(listing ?? initialListingState);
@@ -59,6 +58,18 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
   const [phoneError, setPhoneError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [imagesError, setImagesError] = useState('');
+  const [isCanceling, setIsCanceling] = useState(false);
+
+  // Cleanup object URLs on unmount for new images
+  useEffect(() => {
+    return () => {
+      listingData.images.forEach((img) => {
+        if (!img.cld_public_id && img.src) {
+          URL.revokeObjectURL(img.src);
+        }
+      });
+    };
+  }, [listingData.images]);
 
   const handleListingChange = (
     e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -139,30 +150,57 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
     setListingData({ ...listingData, item: updatedItem });
   };
 
-  const handleCldUploadSuccess = (e: any) => {
-    const uploadedImg = {
-      name: e.info.original_filename,
-      src: e.info.url,
-      cld_public_id: e.info.public_id,
-      file_size: e.info.bytes,
-      file_type: e.info.format
-    } as ListingImage;
-
-    setListingData((prev) => ({ ...prev, images: [...prev.images, uploadedImg] }));
+  const handleFileSelect = (files: ListingImage[]) => {
+    setListingData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...files]
+    }));
     setImagesError('');
   };
 
-  const deleteCldPhoto = async (cldId: string) => {
-    const res = await deletePhoto(cldId);
-    if (res) {
-      const imgs = listingData.images.filter((img) => img.cld_public_id !== cldId);
-      setListingData((prev) => ({ ...prev, images: imgs }));
+  const deleteImage = (index: number) => {
+    const imageToDelete = listingData.images[index];
+    // Revoke object URL for new images to free memory
+    if (!imageToDelete.cld_public_id && imageToDelete.src) {
+      URL.revokeObjectURL(imageToDelete.src);
     }
+
+    setListingData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
   };
 
-  const cancelListing = () => {
-    // TODO: Delete uploaded photos from cloudinary
-    router.push('/');
+  const cancelListing = async () => {
+    setIsCanceling(true);
+
+    try {
+      // Cleanup local object URLs for new images
+      listingData.images.forEach((img) => {
+        if (!img.cld_public_id && img.src) {
+          URL.revokeObjectURL(img.src);
+        }
+      });
+
+      // Navigate based on whether editing existing listing or creating new one
+      if (listingData._id) {
+        // Edit mode - go back to the listing page
+        router.push(`/listings/${listingData._id}`);
+      } else {
+        // Create mode - go to my-listings
+        router.push('/my-listings');
+      }
+    } catch (error) {
+      console.error('Error during cancellation:', error);
+      // Fallback navigation
+      if (listingData._id) {
+        router.push(`/listings/${listingData._id}`);
+      } else {
+        router.push('/my-listings');
+      }
+    } finally {
+      setIsCanceling(false);
+    }
   };
 
   const isListingFormValid = () => {
@@ -185,19 +223,19 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!listingData.contact.email || !emailRegex.test(listingData.contact.email)) {
+    if (!listingData.contact?.email || !emailRegex.test(listingData.contact?.email)) {
       setEmailError('Please enter a valid email address.');
       isValid = false;
     }
 
     // Phone validation (US phone number format)
-    const phoneDigits = listingData.contact.phone.replace(/\D/g, '');
-    if (!listingData.contact.phone || phoneDigits.length !== 10) {
+    const phoneDigits = listingData.contact?.phone.replace(/\D/g, '');
+    if (!listingData.contact?.phone || phoneDigits?.length !== 10) {
       setPhoneError('Please enter a valid 10-digit phone number.');
       isValid = false;
     }
 
-    if (!listingData.images || listingData.images.length === 0) {
+    if (listingData.images.length === 0) {
       setImagesError('Please upload at least one photo.');
       isValid = false;
     }
@@ -206,14 +244,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
   };
 
   const submitListing = async () => {
-    if (isListingFormValid()) {
-      if (mode === 'edit' && onSubmit) {
-        await onSubmit(listingData);
-        return;
-      }
-      const res = await createListing(listingData);
-      if (res) router.push(`/listings/${res._id}`);
-    }
+    if (isListingFormValid()) await onSubmit(listingData);
   };
 
   return (
@@ -430,7 +461,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
           <FormLabel>Phone Number</FormLabel>
           <Input
             variant="outline"
-            value={listingData?.contact.phone}
+            value={listingData?.contact?.phone}
             name="phone"
             type="tel"
             onChange={handleContactChange}
@@ -442,7 +473,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
           <FormLabel>Email Address</FormLabel>
           <Input
             variant="outline"
-            value={listingData?.contact.email}
+            value={listingData?.contact?.email}
             name="email"
             type="email"
             onChange={handleContactChange}
@@ -454,8 +485,8 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
       <VStack>
         <FormControl isRequired isInvalid={!!imagesError} width="full">
           <FormLabel>Photos</FormLabel>
-          <CloudinaryUploader handleCldUploadSuccess={handleCldUploadSuccess} />
-          {listingData.images && listingData.images.length > 0 && (
+          <ImageUploader handleFileSelect={handleFileSelect} />
+          {listingData.images.length > 0 && (
             <Stack
               direction="row"
               alignItems="start"
@@ -463,17 +494,15 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
               border="1px"
               borderRadius="lg"
               padding={2}
+              flexWrap="wrap"
             >
               {listingData.images.map((img, idx) => (
-                <CldImageBox
-                  src={img.cld_public_id}
-                  key={`${img.name}-${idx}`}
+                <ImagePreview
+                  image={img}
+                  key={`image-${img.cld_public_id || img.name}-${idx}`}
                   width={100}
                   height={100}
-                  crop="fill"
-                  alt={`Listing Image ${idx + 1}`}
-                  sizes="100vw"
-                  onDelete={() => deleteCldPhoto(img.cld_public_id)}
+                  onDelete={() => deleteImage(idx)}
                 />
               ))}
             </Stack>
@@ -482,12 +511,12 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, mode = 'create', onS
         </FormControl>
       </VStack>
       <Stack direction={{ base: 'column', md: 'row' }}>
-        {mode === 'create' ? (
-          <Button onClick={submitListing}>Create Listing</Button>
-        ) : (
-          <Button onClick={submitListing}>Save Listing</Button>
-        )}
-        <Button onClick={cancelListing}>Cancel</Button>
+        <Button onClick={submitListing}>
+          {listingData._id ? 'Save Listing' : 'Create Listing'}
+        </Button>
+        <Button onClick={cancelListing} isLoading={isCanceling} loadingText="Cleaning up...">
+          Cancel
+        </Button>
       </Stack>
     </Stack>
   );

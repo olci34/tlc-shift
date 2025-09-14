@@ -14,6 +14,11 @@ apiClient.interceptors.request.use(async (request) => {
     request.headers.Authorization = `${session.user.tokenType} ${session.user.accessToken}`;
   }
 
+  // Remove Content-Type header for FormData requests to let browser set it with boundary
+  if (request.data instanceof FormData) {
+    delete request.headers['Content-Type'];
+  }
+
   return request;
 });
 

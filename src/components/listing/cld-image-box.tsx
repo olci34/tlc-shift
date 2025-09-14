@@ -1,7 +1,8 @@
 import { Box, IconButton } from '@chakra-ui/react';
-import { CldImage, CldImageProps } from 'next-cloudinary';
+import { CldImageProps } from 'next-cloudinary';
 import { DeleteIcon } from '@chakra-ui/icons';
 import React from 'react';
+import CldImageWithFallback from '../cloudinary/cld-image-with-fallback';
 
 interface CldImageBoxProps extends CldImageProps {
   onDelete?: () => void;
@@ -10,7 +11,7 @@ interface CldImageBoxProps extends CldImageProps {
 export const CldImageBox: React.FC<CldImageBoxProps> = ({ onDelete, ...props }) => {
   return (
     <Box position="relative">
-      <CldImage {...props} />
+      <CldImageWithFallback {...props} />
       {onDelete && (
         <IconButton
           aria-label="Delete image"

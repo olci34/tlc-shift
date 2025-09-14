@@ -18,9 +18,10 @@ export interface ListingItem extends Vehicle, Plate {}
 export interface ListingImage {
   name: string;
   src: string;
-  cld_public_id: string;
+  cld_public_id?: string;
   file_type: string;
   file_size: string;
+  file: File;
 }
 
 export interface ListingLocation {
@@ -49,4 +50,6 @@ export interface Listing {
   active: boolean;
   images: ListingImage[];
   user_id?: string;
+  created_at: Date | undefined;
+  updated_at: Date | undefined;
 }

@@ -9,7 +9,7 @@ import {
   useColorModeValue,
   VStack
 } from '@chakra-ui/react';
-import { CldImage } from 'next-cloudinary';
+import CldImageWithFallback from '../cloudinary/cld-image-with-fallback';
 import React from 'react';
 
 export interface ListingCardProps {
@@ -31,8 +31,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) =>
       cursor="pointer"
     >
       <Box height={150} width={{ base: '40%', sm: 'full' }} position="relative" flexShrink={0}>
-        <CldImage
-          src={listing.images[0].cld_public_id}
+        <CldImageWithFallback
+          src={listing.images[0].cld_public_id ?? ''}
           alt={`Listing Image ${listing.images[0].name}`}
           fill
           sizes="(max-width: 768px) 30vw, (max-width: 1200px) 50vw, 10vw"

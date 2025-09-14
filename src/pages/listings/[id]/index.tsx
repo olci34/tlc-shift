@@ -16,7 +16,7 @@ import {
   VStack,
   useDisclosure
 } from '@chakra-ui/react';
-import { CldImage } from 'next-cloudinary';
+import CldImageWithFallback from '@/components/cloudinary/cld-image-with-fallback';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useState, useMemo } from 'react';
 import { FaCar, FaHammer, FaRoad, FaGasPump, FaLocationDot, FaEnvelope } from 'react-icons/fa6';
@@ -34,10 +34,20 @@ const ListingViewPage: FC = () => {
   const deleteBtnBg = useColorModeValue('red.600', 'red.300');
   const priceColor = useColorModeValue('green.600', 'green.300');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const formatDate = (date?: Date) => {
+    if (!date) return '';
+
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      day: 'numeric'
+    }).format(new Date(date));
+  };
 
   useEffect(() => {
     const fetchListing = async () => {
       const resp = await getListing(id as string);
+      console.log('Listing data:', resp);
+      console.log('Images:', resp?.images);
       setListing(resp);
     };
 
@@ -50,13 +60,13 @@ const ListingViewPage: FC = () => {
         <Box flex={1}>
           <Heading size="lg">{listing?.title}</Heading>
           <Text color="#888D8B" fontSize="sm">
-            Listed on April 20
+            Listed on {formatDate(listing?.created_at)}
           </Text>
           <Show below="md">
             <Text color={priceColor} fontWeight={800} fontSize="2xl" mt={2}>
               ${listing?.price}
               <Text as="span" color="#888D8B" fontWeight="normal" fontSize="lg">
-                {' '}/ week
+                {' / week'}
               </Text>
             </Text>
           </Show>
@@ -66,7 +76,7 @@ const ListingViewPage: FC = () => {
             <Text color={priceColor} fontWeight={800} fontSize="2xl">
               ${listing?.price}
               <Text as="span" color="#888D8B" fontWeight="normal" fontSize="lg">
-                {' '}/ week
+                {' / week'}
               </Text>
             </Text>
           </Box>
@@ -106,7 +116,8 @@ const ListingViewPage: FC = () => {
         >
           {listing?.images && listing.images.length ? (
             <>
-              <CldImage
+              <CldImageWithFallback
+                key={`main-image-${imageIdx}`}
                 src={listing?.images[imageIdx].cld_public_id ?? ''}
                 fill
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 40vw"
@@ -166,13 +177,16 @@ const ListingViewPage: FC = () => {
                   flexShrink={0}
                   m={0}
                   borderRadius="lg"
-                  onClick={() => setImageIdx(idx)}
+                  onClick={() => {
+                    console.log('Selecting image index:', idx, 'Image data:', img);
+                    setImageIdx(idx);
+                  }}
                   cursor="pointer"
                   border={idx === imageIdx ? '2px' : 'none'}
                   boxShadow={idx == imageIdx ? 'outline' : ''}
                   width={100}
                 >
-                  <CldImage
+                  <CldImageWithFallback
                     src={listing?.images[idx].cld_public_id ?? ''}
                     width={100}
                     height={100}

@@ -1,6 +1,7 @@
 import { getUserListings } from '@/api/getUserListings';
 import { Listing } from '@/lib/interfaces/Listing';
-import { Box, Heading, Skeleton, Stack } from '@chakra-ui/react';
+import { Box, Heading, Skeleton, Stack, Button, useColorModeValue, HStack } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -40,7 +41,16 @@ const UserListingsPage: FC = () => {
 
   return (
     <Box>
-      <Heading my={4}>My Listings</Heading>
+      <HStack justify="space-between" align="center" my={4}>
+        <Heading>My Listings</Heading>
+        <Button
+          leftIcon={<AddIcon />}
+          backgroundColor={useColorModeValue('green.600', 'green.300')}
+          onClick={() => router.push('/listings/create')}
+        >
+          New Listing
+        </Button>
+      </HStack>
       <Box paddingY={2}>
         <Stack direction={{ base: 'column', sm: 'row' }} wrap="wrap" justify="flex-start">
           {isLoading

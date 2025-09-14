@@ -1,7 +1,7 @@
 import { getListing } from '@/api/getListing';
-import { updateListing } from '@/api/updateListing';
 import ListingForm from '@/components/form/listing-form';
 import type { Listing } from '@/lib/interfaces/Listing';
+import { updateListing } from '@/api/updateListing';
 import { Box, Heading, Skeleton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useState } from 'react';
@@ -25,9 +25,19 @@ const EditListingPage: FC = () => {
 
   const onSave = async (payload: Listing) => {
     if (!id) return;
-    const resp = await updateListing(id as string, payload);
-    if (resp) {
-      router.push(`/listings/${id}`);
+    try {
+      const resp = await updateListing(payload);
+      if (resp) {
+        // Cleanup object URLs for new images
+        payload.images.forEach((img) => {
+          if (!img.cld_public_id && img.src) {
+            URL.revokeObjectURL(img.src);
+          }
+        });
+        router.push(`/listings/${id}`);
+      }
+    } catch (error) {
+      console.error('Failed to update listing:', error);
     }
   };
 
@@ -37,7 +47,7 @@ const EditListingPage: FC = () => {
       {isLoading || !listing ? (
         <Skeleton height={300} />
       ) : (
-        <ListingForm listing={listing} mode="edit" onSubmit={onSave} />
+        <ListingForm listing={listing} onSubmit={onSave} />
       )}
     </Box>
   );
