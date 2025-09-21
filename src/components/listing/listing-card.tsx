@@ -5,6 +5,7 @@ import {
   CardBody,
   Heading,
   HStack,
+  Stack,
   Text,
   useColorModeValue,
   VStack
@@ -54,11 +55,18 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) =>
         {listing.listing_category === 'Vehicle' && (
           <VStack alignItems="flex-start" gap={0}>
             <Text>{`${listing.item.make} ${listing.item.model}`}</Text>
-            <HStack color="#888D8B" fontSize="sm">
-              <Text>{listing.item.year}</Text>
-              <Text>{listing.item.fuel}</Text>
+            <Stack
+              color="#888D8B"
+              fontSize="sm"
+              rowGap={0}
+              direction={{ base: 'column', sm: 'row' }}
+            >
+              <HStack>
+                <Text>{listing.item.year}</Text>
+                <Text>{listing.item.fuel}</Text>
+              </HStack>
               <Text>{`${listing.item.mileage?.toLocaleString()} mil.`}</Text>
-            </HStack>
+            </Stack>
           </VStack>
         )}
       </CardBody>

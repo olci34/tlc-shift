@@ -1,201 +1,69 @@
-import {
-  Box,
-  HStack,
-  Icon,
-  RangeSlider,
-  RangeSliderFilledTrack,
-  RangeSliderMark,
-  RangeSliderThumb,
-  RangeSliderTrack,
-  Spinner,
-  Stack,
-  Text,
-  VStack
-} from '@chakra-ui/react';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
-import moment from 'moment';
-import { FeatureCollection } from 'geojson';
-import dynamic from 'next/dynamic';
-import DateFormInput from '@/components/form/date-form-input';
-import { debounce } from 'lodash';
-import { TimeIcon } from '@chakra-ui/icons';
-import { getTripDensity } from '@/api/getTripDensity';
-const GeoMap = dynamic(() => import('../components/geomap/geomap'), { ssr: false });
+import { Box, Heading, HStack, Text, Skeleton } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { ListingCard } from '@/components/listing/listing-card';
+import { getListings, ListingResponse } from '@/api/getListings';
+import { Listing } from '@/lib/interfaces/Listing';
 
 export default function Home() {
-  const dateFormat = 'YYYY-MM-DD';
-  const [defaultStartTime, defaultEndTime] = [12, 17];
-  const lastYearToday = moment.utc().startOf('day').set('year', 2023).set('hour', defaultStartTime);
-
-  const startDateRef = useRef<HTMLInputElement>(null);
-
-  const [geoData, setGeoData] = useState<FeatureCollection>();
-  const [tripDensity, setTripDenstiy] = useState<Map<number, number>>();
-  const [startTime, setStartTime] = useState<number>(defaultStartTime);
-  const [endTime, setEndTime] = useState<number>(defaultEndTime);
-  const [searchDate, setSearchDate] = useState<moment.Moment>(lastYearToday);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const startSliderText = useRef<HTMLParagraphElement>(null);
-  const endSliderText = useRef<HTMLParagraphElement>(null);
-
-  const handleDateChange = useCallback((setDate: Dispatch<SetStateAction<moment.Moment>>) => {
-    return (e: ChangeEvent<HTMLInputElement>) => {
-      const newDate = moment.utc(e.target.value);
-      setDate(newDate);
-    };
-  }, []);
+  const router = useRouter();
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (startSliderText.current && endSliderText.current) {
-      startSliderText.current.innerText = `${startTime}:00`;
-      endSliderText.current.innerText = `${endTime - 1}:59`;
-    }
-    const fetchGeoData = async () => {
-      const geojson: FeatureCollection | undefined = await fetch('./nyc-taxi-zones.geojson').then(
-        (resp) => resp.json()
-      );
-      setGeoData(geojson);
+    const fetchSuggestedListings = async () => {
+      try {
+        const response: ListingResponse | undefined = await getListings(1, 10);
+        if (response) {
+          setListings(response.listings);
+        }
+      } catch (error) {
+        console.error('Error fetching suggested listings:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchGeoData();
+
+    fetchSuggestedListings();
   }, []);
 
-  const adjustSliderTexts = (t1: number, t2: number) => {
-    if (startSliderText.current) {
-      startSliderText.current.innerText = `${t1}:00`;
-    }
-    if (endSliderText.current) {
-      endSliderText.current.innerText = `${t2 - 1}:59`;
-    }
+  const handleListingClick = (listingId: string) => {
+    router.push(`/listings/${listingId}`);
   };
 
-  useEffect(() => {
-    const fetchTrips = debounce(async () => {
-      setIsLoading(true);
-      const endDate = moment(searchDate).set('hour', endTime);
-      const resp = await getTripDensity(searchDate, endDate, startTime, endTime);
-
-      if (resp) {
-        const density = new Map<number, number>();
-        resp.forEach((data) => density.set(data.location_id, data.density));
-        setTripDenstiy(density);
-      }
-      setIsLoading(false);
-    }, 300);
-
-    fetchTrips();
-    return () => fetchTrips.cancel();
-  }, [searchDate, startTime, endTime]);
-
   return (
-    <Box height="full" width="full">
-      <VStack gap={2} width="full" height="full">
-        <Stack
-          gap={4}
-          direction={{ base: 'column', md: 'row' }}
-          alignContent="flex-start"
-          width="full"
-        >
-          <HStack>
-            <DateFormInput
-              value={searchDate.format(dateFormat)}
-              max={moment('2023-12-31').format(dateFormat)}
-              min={moment('2023-01-01').format(dateFormat)}
-              ref={startDateRef}
-              onChange={handleDateChange(setSearchDate)}
-              isDisabled={isLoading}
-            />
-          </HStack>
-          <HStack width="full" gap={4}>
-            <Icon as={TimeIcon}></Icon>
-            <Box height={6} width="full" pr={6}>
-              <RangeSlider
-                defaultValue={[startTime, endTime]}
-                min={0}
-                max={23}
-                step={1}
-                onChange={([t1, t2]) => adjustSliderTexts(t1, t2)}
-                onChangeEnd={([t1, t2]) => {
-                  setEndTime(t2);
-                  setStartTime(t1);
-                }}
-                isDisabled={isLoading}
-              >
-                <RangeSliderMark
-                  value={startTime}
-                  textAlign="center"
-                  bg="blue.500"
-                  color="white"
-                  mt="-10"
-                  ml="-5"
-                  w="12"
-                  borderRadius={4}
-                />
-                <RangeSliderMark
-                  value={endTime}
-                  textAlign="center"
-                  bg="blue.500"
-                  color="white"
-                  mt="-10"
-                  ml="-5"
-                  w="12"
-                  borderRadius={4}
-                />
-                <RangeSliderTrack>
-                  <RangeSliderFilledTrack />
-                </RangeSliderTrack>
-                <RangeSliderThumb
-                  index={0}
-                  boxSize={6}
-                  width={10}
-                  fontSize="xs"
-                  color="blackAlpha.600"
-                >
-                  <Text color="blackAlpha.600" ref={startSliderText}>
-                    {startSliderText.current?.innerText}
-                  </Text>
-                </RangeSliderThumb>
-                <RangeSliderThumb index={1} boxSize={6} width={10} fontSize="xs">
-                  <Text color="blackAlpha.600" ref={endSliderText}>
-                    {endSliderText.current?.innerText}
-                  </Text>
-                </RangeSliderThumb>
-              </RangeSlider>
-            </Box>
-          </HStack>
-        </Stack>
+    <Box padding={{ base: 4, md: 8 }}>
+      <Heading size="xl" mb={2}>
+        Welcome to TLC Shift
+      </Heading>
+      <Text color="gray.600" mb={8} fontSize="lg">
+        Find the perfect rental car for your needs
+      </Text>
 
-        <Box
-          backgroundColor="yellow.200"
-          width="full"
-          height="full"
-          borderRadius="2xl"
-          marginBottom={6}
-        >
-          <GeoMap geoData={geoData} tripDensity={tripDensity} isLoading={isLoading} />
-          {isLoading && (
-            <Stack direction="column" position="absolute" top="50%" left="50%" zIndex={1000}>
-              <Spinner
-                size="xl"
-                emptyColor="orange.300"
-                color="blue.300"
-                thickness="4px"
-                label="Loading..."
-                transform="translate(-50%, -50%)"
-              />
-              <Text color="blackAlpha.700">Loading...</Text>
-              <Text color="blackAlpha.700">This may take up to 50 seconds.</Text>
-            </Stack>
-          )}
+      <Box>
+        <Heading size="lg" mb={4}>
+          Latest Rentals
+        </Heading>
+
+        <Box overflowX="auto" pb={4}>
+          <HStack spacing={4}>
+            {loading
+              ? Array.from({ length: 10 }).map((_, index) => (
+                  <Box key={`skeleton-${index}`} minWidth={250} flexShrink={0}>
+                    <Skeleton height={200} borderRadius="md" />
+                  </Box>
+                ))
+              : listings.map((listing) => (
+                  <Box key={listing._id}>
+                    <ListingCard
+                      listing={listing}
+                      onClick={() => handleListingClick(listing._id!)}
+                    />
+                  </Box>
+                ))}
+          </HStack>
         </Box>
-      </VStack>
+      </Box>
     </Box>
   );
 }

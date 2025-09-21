@@ -71,24 +71,32 @@ const NavBar = () => {
                 <DrawerBody>
                   <Stack direction="column" spacing={4}>
                     <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
-                      Trips
+                      Home
                     </NavLinkItem>
                     <NavLinkItem
+                      href="/trips"
+                      path={router.asPath}
+                      prefetch={false}
+                      onClick={onClose}
+                    >
+                      Trips
+                    </NavLinkItem>
+                    {/* <NavLinkItem
                       href="/earnings"
                       path={router.asPath}
                       prefetch={false}
                       onClick={onClose}
                     >
                       Earnings
-                    </NavLinkItem>
-                    <NavLinkItem
+                    </NavLinkItem> */}
+                    {/* <NavLinkItem
                       href="/about"
                       path={router.asPath}
                       prefetch={false}
                       onClick={onClose}
                     >
                       About
-                    </NavLinkItem>
+                    </NavLinkItem> */}
                     <NavLinkItem
                       href="/listings"
                       path={router.asPath}
@@ -116,14 +124,17 @@ const NavBar = () => {
               TLC Shift
             </Heading>
             <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
+              Home
+            </NavLinkItem>
+            <NavLinkItem href="/trips" path={router.asPath} prefetch={false} onClick={onClose}>
               Trips
             </NavLinkItem>
-            <NavLinkItem href="/earnings" path={router.asPath} prefetch={false} onClick={onClose}>
+            {/* <NavLinkItem href="/earnings" path={router.asPath} prefetch={false} onClick={onClose}>
               Earnings
             </NavLinkItem>
             <NavLinkItem href="/about" path={router.asPath} prefetch={false} onClick={onClose}>
               About
-            </NavLinkItem>
+            </NavLinkItem> */}
             <NavLinkItem href="/listings" path={router.asPath} prefetch={false} onClick={onClose}>
               Listings
             </NavLinkItem>
