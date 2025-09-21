@@ -8,7 +8,7 @@ const MainLayout: FC<ReactNodeChildrenProps> = ({ children }) => {
     <Container as="main" minH="100vh" maxW="container.lg">
       <VStack height="100vh">
         <NavBar />
-        <Box height="full" width="full">
+        <Box padding={{ base: 0, sm: 4 }} height="full" width="full">
           {children}
         </Box>
       </VStack>

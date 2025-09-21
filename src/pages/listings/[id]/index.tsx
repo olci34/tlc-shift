@@ -46,8 +46,6 @@ const ListingViewPage: FC = () => {
   useEffect(() => {
     const fetchListing = async () => {
       const resp = await getListing(id as string);
-      console.log('Listing data:', resp);
-      console.log('Images:', resp?.images);
       setListing(resp);
     };
 
@@ -55,7 +53,7 @@ const ListingViewPage: FC = () => {
   }, [id]);
 
   return (
-    <Box padding={{ base: 0, sm: 4 }}>
+    <Box>
       <HStack>
         <Box flex={1}>
           <Heading size="lg">{listing?.title}</Heading>
@@ -178,7 +176,6 @@ const ListingViewPage: FC = () => {
                   m={0}
                   borderRadius="lg"
                   onClick={() => {
-                    console.log('Selecting image index:', idx, 'Image data:', img);
                     setImageIdx(idx);
                   }}
                   cursor="pointer"
@@ -250,7 +247,7 @@ const ListingViewPage: FC = () => {
             </Button>
           </HStack>
           <Box justifyContent="space-between">
-            <Text marginTop={2} whiteSpace="pre-wrap">
+            <Text my={2} whiteSpace="pre-wrap">
               {listing?.description}
             </Text>
             <Text fontSize="sm" color="#888D8B" position="relative">

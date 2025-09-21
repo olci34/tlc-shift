@@ -20,7 +20,6 @@ const Account = () => {
   // const [userInfo, setUserInfo] = useState<UserInfo>();
   const session = useSession();
   const user = session.data?.user;
-  console.log(user);
 
   return (
     <Box maxW="container.md" mx="auto" py={8} px={4}>

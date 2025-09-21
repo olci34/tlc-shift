@@ -186,7 +186,12 @@ const ListingsPage = () => {
 
       {/* Listing Tiles */}
       <Box paddingY={2}>
-        <Stack direction={{ base: 'column', sm: 'row' }} wrap="wrap" justify="flex-start">
+        <Stack
+          direction={{ base: 'column', sm: 'row' }}
+          justifyContent="center"
+          wrap="wrap"
+          justify="flex-start"
+        >
           {listings?.map((listing) => (
             <ListingCard
               key={listing._id}
