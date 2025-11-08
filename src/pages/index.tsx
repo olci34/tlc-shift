@@ -6,20 +6,31 @@ import {
   Skeleton,
   Stack,
   Image,
-  useColorModeValue
+  useColorModeValue,
+  Button,
+  Input,
+  FormControl,
+  FormErrorMessage,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ListingCard } from '@/components/listing/listing-card';
 import { getListings, ListingResponse } from '@/api/getListings';
 import { Listing } from '@/lib/interfaces/Listing';
 import Link from 'next/link';
+import { AddIcon, EmailIcon } from '@chakra-ui/icons';
 
 export default function Home() {
   const router = useRouter();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [emailError, setEmailError] = useState(false);
+  const newsletterEmail = useRef<HTMLInputElement>(null);
   const textColor = useColorModeValue('gray.600', 'gray.400');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   useEffect(() => {
     const fetchSuggestedListings = async () => {
@@ -42,6 +53,16 @@ export default function Home() {
     router.push(`/listings/${listingId}`);
   };
 
+  const handleNewsletter = () => {
+    const email = newsletterEmail.current?.value;
+    if (email && emailRegex.test(email)) {
+      setEmailError(false);
+      console.log(email);
+    } else {
+      setEmailError(true);
+    }
+  };
+
   return (
     <Box>
       <Heading size="xl" mb={2}>
@@ -53,11 +74,61 @@ export default function Home() {
 
       <Stack gap={{ base: 6, sm: 8 }}>
         <Box>
+          <Heading size="lg">Join for Discounts</Heading>
+          <Text color={textColor} mb={2}>
+            Join to the waiting list to get discounts on many auto parts, tires, car services and
+            more.
+          </Text>
+
+          <FormControl isRequired isInvalid={emailError} maxWidth="lg">
+            <InputGroup>
+              <InputLeftElement>
+                <EmailIcon />
+              </InputLeftElement>
+              <Input
+                variant="outline"
+                name="email"
+                type="email"
+                placeholder="example@email.com"
+                ref={newsletterEmail}
+              />
+              <InputRightElement width="4.5rem">
+                <Button onClick={handleNewsletter} variant="ghost">
+                  Join
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            <FormErrorMessage>{'Invalid email address.'}</FormErrorMessage>
+          </FormControl>
+        </Box>
+
+        <Box>
+          <Heading size="lg" mb={2}>
+            Have a Car to Rent?
+          </Heading>
+          <Text color={textColor} mb={4}>
+            List your vehicle and start earning extra income. Create a listing in minutes and reach
+            thousands of potential renters.
+          </Text>
+          <Button
+            leftIcon={<AddIcon />}
+            backgroundColor={useColorModeValue('green.600', 'green.300')}
+            color="white"
+            _hover={{
+              backgroundColor: useColorModeValue('green.700', 'green.400')
+            }}
+            onClick={() => router.push('/listings/create')}
+          >
+            Create New Listing
+          </Button>
+        </Box>
+
+        <Box>
           <Heading size="lg" mb={2}>
             Latest Rentals
           </Heading>
 
-          <Box overflowX="auto">
+          <Box overflowX="auto" mb={2}>
             <HStack spacing={4}>
               {loading
                 ? Array.from({ length: 10 }).map((_, index) => (
@@ -75,6 +146,9 @@ export default function Home() {
                   ))}
             </HStack>
           </Box>
+          <Button color={useColorModeValue('green.600', 'green.300')} variant="link">
+            <Link href="/listings">See All Rentals</Link>
+          </Button>
         </Box>
 
         <Box>
@@ -95,22 +169,11 @@ export default function Home() {
               <Text mb={2}>
                 Check out our map that shows busy areas based on historic Uber and Lyft data.
               </Text>
-              <Box color={useColorModeValue('green.600', 'green.300')}>
+              <Button color={useColorModeValue('green.600', 'green.300')} variant="link">
                 <Link href="/trips">Go to Map</Link>
-              </Box>
+              </Button>
             </Box>
           </HStack>
-        </Box>
-
-        <Box>
-          <Heading size="lg">Discounts</Heading>
-          <Text color={textColor} mb={2}>
-            Register to get discounts on maintenance, repairs, auto parts, road assistance.
-          </Text>
-
-          <Box color={useColorModeValue('green.600', 'green.300')}>
-            <Link href="/signup-login">Register</Link>
-          </Box>
         </Box>
       </Stack>
     </Box>
