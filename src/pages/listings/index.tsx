@@ -12,6 +12,7 @@ import {
   Icon,
   Select,
   Show,
+  SimpleGrid,
   Stack,
   Text,
   useColorModeValue,
@@ -186,11 +187,10 @@ const ListingsPage = () => {
 
       {/* Listing Tiles */}
       <Box paddingY={2}>
-        <Stack
-          direction={{ base: 'column', sm: 'row' }}
-          justifyContent="center"
-          wrap="wrap"
-          justify="flex-start"
+        <SimpleGrid
+          columns={{ base: 2, sm: 3, md: 3, lg: 4 }}
+          spacing={{ base: 3, sm: 4, md: 5 }}
+          justifyItems="center"
         >
           {listings?.map((listing) => (
             <ListingCard
@@ -201,7 +201,7 @@ const ListingsPage = () => {
               }}
             />
           ))}
-        </Stack>
+        </SimpleGrid>
       </Box>
       <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
     </Box>
