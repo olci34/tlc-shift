@@ -18,6 +18,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { ListingContact } from '@/lib/interfaces/Listing';
+import { useTranslations } from 'next-intl';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ interface ContactModalProps {
 }
 
 const ContactModal: FC<ContactModalProps> = ({ isOpen, onClose, contact }) => {
+  const t = useTranslations();
   const { data: session } = useSession();
   const router = useRouter();
   const descriptionColor = useColorModeValue('gray.600', 'gray.400');
@@ -45,44 +47,44 @@ const ContactModal: FC<ContactModalProps> = ({ isOpen, onClose, contact }) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Contact Information</ModalHeader>
+        <ModalHeader>{t('contactModal.title')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           {session ? (
             <VStack spacing={4} align="stretch">
               <Text fontSize="sm" color={descriptionColor}>
-                Contact the seller using the information below:
+                {t('contactModal.description')}
               </Text>
               <Box>
                 <HStack spacing={3} mb={2}>
                   <Icon as={FaEnvelope} color="blue.500" />
-                  <Text fontWeight="medium">Email</Text>
+                  <Text fontWeight="medium">{t('contactModal.email')}</Text>
                 </HStack>
                 <Text ml={7} color={contactValueColor}>
-                  {contact?.email || 'No email provided'}
+                  {contact?.email || t('contactModal.noEmail')}
                 </Text>
               </Box>
               <Box>
                 <HStack spacing={3} mb={2}>
                   <Icon as={FaPhone} color="green.500" />
-                  <Text fontWeight="medium">Phone</Text>
+                  <Text fontWeight="medium">{t('contactModal.phone')}</Text>
                 </HStack>
                 <Text ml={7} color={contactValueColor}>
-                  {contact?.phone || 'No phone provided'}
+                  {contact?.phone || t('contactModal.noPhone')}
                 </Text>
               </Box>
             </VStack>
           ) : (
             <VStack spacing={4}>
               <Text textAlign="center" color={descriptionColor}>
-                Please sign in or create an account to view contact information
+                {t('contactModal.loginPrompt')}
               </Text>
               <HStack spacing={3} width="full">
                 <Button colorScheme="blue" variant="outline" flex={1} onClick={handleLoginClick}>
-                  Login
+                  {t('contactModal.login')}
                 </Button>
                 <Button colorScheme="blue" flex={1} onClick={handleSignupClick}>
-                  Sign Up
+                  {t('contactModal.signUp')}
                 </Button>
               </HStack>
             </VStack>

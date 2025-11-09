@@ -7,8 +7,12 @@ import { useSession } from 'next-auth/react';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { ListingCard } from '@/components/listing/listing-card';
 import Paginator from '@/components/paginator/paginator';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 const UserListingsPage: FC = () => {
+  const t = useTranslations();
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -42,13 +46,13 @@ const UserListingsPage: FC = () => {
   return (
     <Box>
       <HStack justify="space-between" align="center" my={4}>
-        <Heading>My Listings</Heading>
+        <Heading>{t('myListings.title')}</Heading>
         <Button
           leftIcon={<AddIcon />}
           backgroundColor={useColorModeValue('green.600', 'green.300')}
           onClick={() => router.push('/listings/create')}
         >
-          New Listing
+          {t('myListings.newListing')}
         </Button>
       </HStack>
       <Box paddingY={2}>
@@ -74,3 +78,11 @@ const UserListingsPage: FC = () => {
 };
 
 export default UserListingsPage;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
+};

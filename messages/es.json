@@ -75,6 +75,52 @@
     "mileageRange4": "150,000 - 200,000 millas",
     "mileageRange5": "200,000+ millas",
     "pricePerWeek": "/ semana",
-    "plateBadge": "Placa"
+    "plateBadge": "Placa",
+    "listedOn": "Publicado el",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "details": "Detalles",
+    "contact": "Contactar",
+    "mileageUnit": "mil."
+  },
+  "auth": {
+    "signUp": "Registrarse",
+    "login": "Iniciar sesión",
+    "emailAddress": "Correo electrónico",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "fieldRequired": "Este campo es obligatorio.",
+    "invalidEmail": "Dirección de correo electrónico no válida.",
+    "passwordRequirements": "La contraseña debe incluir al menos 1 mayúscula, 1 minúscula y 1 número.",
+    "passwordsNotMatching": "Las contraseñas no coinciden",
+    "passwordLength": "La longitud de la contraseña debe estar entre 6 y 18 caracteres.",
+    "signupError": "Ocurrió un error al registrarse"
+  },
+  "trips": {
+    "loading": "Cargando...",
+    "loadingMessage": "Esto puede tardar hasta 50 segundos."
+  },
+  "account": {
+    "email": "Correo electrónico",
+    "changePassword": "Cambiar contraseña"
+  },
+  "myListings": {
+    "title": "Mis listados",
+    "newListing": "Nuevo listado"
+  },
+  "contactModal": {
+    "title": "Información de contacto",
+    "description": "Contacte al vendedor usando la siguiente información:",
+    "email": "Correo electrónico",
+    "noEmail": "No se proporcionó correo electrónico",
+    "phone": "Teléfono",
+    "noPhone": "No se proporcionó teléfono",
+    "loginPrompt": "Por favor inicie sesión o cree una cuenta para ver la información de contacto",
+    "login": "Iniciar sesión",
+    "signUp": "Registrarse"
   }
 }

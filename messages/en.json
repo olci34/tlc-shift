@@ -75,6 +75,52 @@
     "mileageRange4": "150,000 - 200,000 miles",
     "mileageRange5": "200,000+ miles",
     "pricePerWeek": "/ week",
-    "plateBadge": "Plate"
+    "plateBadge": "Plate",
+    "listedOn": "Listed on",
+    "edit": "Edit",
+    "delete": "Delete",
+    "details": "Details",
+    "contact": "Contact",
+    "mileageUnit": "mil."
+  },
+  "auth": {
+    "signUp": "Sign Up",
+    "login": "Login",
+    "emailAddress": "Email address",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "fieldRequired": "This field is required.",
+    "invalidEmail": "Invalid email address.",
+    "passwordRequirements": "Password must include at least 1 uppercase, 1 lowercase and 1 number.",
+    "passwordsNotMatching": "Passwords are not matching",
+    "passwordLength": "Password length must be between 6 and 18 characters.",
+    "signupError": "Error occurred when signup"
+  },
+  "trips": {
+    "loading": "Loading...",
+    "loadingMessage": "This may take up to 50 seconds."
+  },
+  "account": {
+    "email": "Email",
+    "changePassword": "Change Password"
+  },
+  "myListings": {
+    "title": "My Listings",
+    "newListing": "New Listing"
+  },
+  "contactModal": {
+    "title": "Contact Information",
+    "description": "Contact the seller using the information below:",
+    "email": "Email",
+    "noEmail": "No email provided",
+    "phone": "Phone",
+    "noPhone": "No phone provided",
+    "loginPrompt": "Please sign in or create an account to view contact information",
+    "login": "Login",
+    "signUp": "Sign Up"
   }
 }

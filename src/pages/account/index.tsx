@@ -15,9 +15,13 @@ import {
   HStack
 } from '@chakra-ui/react';
 import { MdOutlinePermIdentity } from 'react-icons/md';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 const Account = () => {
   // const [userInfo, setUserInfo] = useState<UserInfo>();
+  const t = useTranslations();
   const session = useSession();
   const user = session.data?.user;
 
@@ -45,14 +49,14 @@ const Account = () => {
 
           <Box p={2}>
             <Text fontWeight="bold" mb={2}>
-              Email
+              {t('account.email')}
             </Text>
-            <Text>{'email'}</Text>
+            <Text>{user?.email}</Text>
           </Box>
 
           <Box p={2}>
             <Link href="/change-password" color="green">
-              Change Password
+              {t('account.changePassword')}
             </Link>
           </Box>
         </VStack>
@@ -62,3 +66,11 @@ const Account = () => {
 };
 
 export default Account;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
+};

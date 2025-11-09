@@ -29,10 +29,14 @@ import {
   useRef,
   useState
 } from 'react';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 const GeoMap = dynamic(() => import('../../components/geomap/geomap'), { ssr: false });
 
 const TripsPage: FC = () => {
+  const t = useTranslations();
   const dateFormat = 'YYYY-MM-DD';
   const [defaultStartTime, defaultEndTime] = [12, 17];
   const lastYearToday = moment.utc().startOf('day').set('year', 2023).set('hour', defaultStartTime);
@@ -188,11 +192,11 @@ const TripsPage: FC = () => {
                 emptyColor="orange.300"
                 color="blue.300"
                 thickness="4px"
-                label="Loading..."
+                label={t('trips.loading')}
                 transform="translate(-50%, -50%)"
               />
-              <Text color="blackAlpha.700">Loading...</Text>
-              <Text color="blackAlpha.700">This may take up to 50 seconds.</Text>
+              <Text color="blackAlpha.700">{t('trips.loading')}</Text>
+              <Text color="blackAlpha.700">{t('trips.loadingMessage')}</Text>
             </Stack>
           )}
         </Box>
@@ -202,3 +206,11 @@ const TripsPage: FC = () => {
 };
 
 export default TripsPage;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
+};

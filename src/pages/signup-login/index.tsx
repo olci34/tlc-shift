@@ -24,6 +24,9 @@ import { isValidPassword } from '@/lib/utils/password-validator';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { signup } from '@/api/signup';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 export interface SignupData {
   email: string;
@@ -55,6 +58,7 @@ interface LoginErrors {
 
 const SignupLogin: React.FC = () => {
   const router = useRouter();
+  const t = useTranslations();
   const [signupData, setSignupData] = useState<SignupData>({
     email: '',
     firstName: '',
@@ -117,7 +121,7 @@ const SignupLogin: React.FC = () => {
         setLoginErrors({ ...loginErrors, errorMessage: res.error });
       }
     } else {
-      setSignupErrors({ ...signupErrors, errorMessage: 'Error occurred when signup' });
+      setSignupErrors({ ...signupErrors, errorMessage: t('auth.signupError') });
     }
   };
 
@@ -143,13 +147,13 @@ const SignupLogin: React.FC = () => {
   const validateSignup = (name: keyof SignupErrors, value: string) => {
     let error: string | null = null;
     if (!value.trim()) {
-      error = 'This field is required.';
+      error = t('auth.fieldRequired');
     } else if (name === 'email' && !isValidEmail(value)) {
-      error = 'Invalid email address.';
+      error = t('auth.invalidEmail');
     } else if (name === 'password' && !isValidPassword(value)) {
-      error = 'Password must include at least 1 uppercase, 1 lowercase and 1 number.';
+      error = t('auth.passwordRequirements');
     } else if (name === 'confirmPassword' && value !== signupData.password) {
-      error = 'Passwords are not matching';
+      error = t('auth.passwordsNotMatching');
     }
 
     setSignupErrors({ ...signupErrors, [name]: error });
@@ -158,9 +162,9 @@ const SignupLogin: React.FC = () => {
   const validateLogin = (name: keyof LoginErrors, value: string) => {
     let error: string | null = null;
     if (!value.trim()) {
-      error = 'This field is required.';
+      error = t('auth.fieldRequired');
     } else if (name === 'email' && !isValidEmail(value)) {
-      error = 'Invalid email address.';
+      error = t('auth.invalidEmail');
     }
 
     setLoginErrors({ ...loginErrors, [name]: error });
@@ -182,14 +186,14 @@ const SignupLogin: React.FC = () => {
     <Box maxW="md" mx="auto" mt={8} p={6}>
       <Tabs isFitted variant="enclosed" defaultIndex={1}>
         <TabList mb="1em">
-          <Tab>Sign Up</Tab>
-          <Tab>Login</Tab>
+          <Tab>{t('auth.signUp')}</Tab>
+          <Tab>{t('auth.login')}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
             <VStack spacing={4}>
               <FormControl id="signup-email" isRequired isInvalid={!!signupErrors.email}>
-                <FormLabel>Email address</FormLabel>
+                <FormLabel>{t('auth.emailAddress')}</FormLabel>
                 <Input
                   type="email"
                   name="email"
@@ -199,7 +203,7 @@ const SignupLogin: React.FC = () => {
                 {signupErrors.email && <FormErrorMessage>{signupErrors.email}</FormErrorMessage>}
               </FormControl>
               <FormControl id="signup-firstName" isRequired isInvalid={!!signupErrors.firstName}>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>{t('auth.firstName')}</FormLabel>
                 <Input
                   type="text"
                   name="firstName"
@@ -211,7 +215,7 @@ const SignupLogin: React.FC = () => {
                 )}
               </FormControl>
               <FormControl id="signup-lastName" isRequired isInvalid={!!signupErrors.lastName}>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>{t('auth.lastName')}</FormLabel>
                 <Input
                   type="text"
                   name="lastName"
@@ -223,7 +227,7 @@ const SignupLogin: React.FC = () => {
                 )}
               </FormControl>
               <FormControl id="signup-password" isRequired isInvalid={!!signupErrors.password}>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t('auth.password')}</FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -233,16 +237,14 @@ const SignupLogin: React.FC = () => {
                   />
                   <InputRightElement width="4.5rem">
                     <IconButton
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                       icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
                       onClick={togglePasswordVisibility}
                       variant="ghost"
                     />
                   </InputRightElement>
                 </InputGroup>
-                <FormHelperText>
-                  Password length must be between 6 and 18 characters.
-                </FormHelperText>
+                <FormHelperText>{t('auth.passwordLength')}</FormHelperText>
                 {signupErrors.password && (
                   <FormErrorMessage>{signupErrors.password}</FormErrorMessage>
                 )}
@@ -252,7 +254,7 @@ const SignupLogin: React.FC = () => {
                 isRequired
                 isInvalid={!!signupErrors.confirmPassword}
               >
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>{t('auth.confirmPassword')}</FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -262,7 +264,7 @@ const SignupLogin: React.FC = () => {
                   />
                   <InputRightElement width="4.5rem">
                     <IconButton
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                       icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
                       onClick={togglePasswordVisibility}
                       variant="ghost"
@@ -279,14 +281,14 @@ const SignupLogin: React.FC = () => {
                 onClick={handleSignupSubmit}
                 disabled={!isFormValid(signupData, signupErrors)}
               >
-                Sign Up
+                {t('auth.signUp')}
               </Button>
             </VStack>
           </TabPanel>
           <TabPanel>
             <VStack spacing={4}>
               <FormControl id="login-email" isRequired isInvalid={!!loginErrors.email}>
-                <FormLabel>Email address</FormLabel>
+                <FormLabel>{t('auth.emailAddress')}</FormLabel>
                 <Input
                   type="email"
                   name="email"
@@ -300,7 +302,7 @@ const SignupLogin: React.FC = () => {
                 isRequired
                 isInvalid={!loginData.password && !!loginErrors.password}
               >
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t('auth.password')}</FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -310,7 +312,7 @@ const SignupLogin: React.FC = () => {
                   />
                   <InputRightElement width="4.5rem">
                     <IconButton
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                       icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
                       onClick={togglePasswordVisibility}
                       variant="ghost"
@@ -322,7 +324,7 @@ const SignupLogin: React.FC = () => {
                 )}
               </FormControl>
               <Button colorScheme="blue" width="full" onClick={handleLoginSubmit}>
-                Login
+                {t('auth.login')}
               </Button>
               {loginErrors.errorMessage && (
                 <Text colorScheme="red">{loginErrors.errorMessage}</Text>
@@ -336,3 +338,11 @@ const SignupLogin: React.FC = () => {
 };
 
 export default SignupLogin;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
+};

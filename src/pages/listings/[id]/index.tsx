@@ -22,10 +22,14 @@ import { FC, useEffect, useState, useMemo } from 'react';
 import { FaCar, FaHammer, FaRoad, FaGasPump, FaLocationDot, FaEnvelope } from 'react-icons/fa6';
 import { useSession } from 'next-auth/react';
 import ContactModal from '@/components/contact-modal';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps, GetStaticPaths } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 const ListingViewPage: FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
+  const t = useTranslations();
   const [listing, setListing] = useState<Listing>();
   const { id } = router.query;
   const [imageIdx, setImageIdx] = useState<number>(0);
@@ -58,13 +62,13 @@ const ListingViewPage: FC = () => {
         <Box flex={1}>
           <Heading size="lg">{listing?.title}</Heading>
           <Text color="#888D8B" fontSize="sm">
-            Listed on {formatDate(listing?.created_at)}
+            {t('listings.listedOn')} {formatDate(listing?.created_at)}
           </Text>
           <Show below="md">
             <Text color={priceColor} fontWeight={800} fontSize="2xl" mt={2}>
               ${listing?.price}
               <Text as="span" color="#888D8B" fontWeight="normal" fontSize="lg">
-                {' / week'}
+                {t('listings.pricePerWeek')}
               </Text>
             </Text>
           </Show>
@@ -74,7 +78,7 @@ const ListingViewPage: FC = () => {
             <Text color={priceColor} fontWeight={800} fontSize="2xl">
               ${listing?.price}
               <Text as="span" color="#888D8B" fontWeight="normal" fontSize="lg">
-                {' / week'}
+                {t('listings.pricePerWeek')}
               </Text>
             </Text>
           </Box>
@@ -88,7 +92,7 @@ const ListingViewPage: FC = () => {
                   backgroundColor={editBtnBg}
                   onClick={() => router.push(`/listings/${listing?._id}/edit`)}
                 >
-                  Edit
+                  {t('listings.edit')}
                 </Button>
                 <Button
                   leftIcon={<DeleteIcon />}
@@ -97,7 +101,7 @@ const ListingViewPage: FC = () => {
                     // TODO: implement delete
                   }}
                 >
-                  Delete
+                  {t('listings.delete')}
                 </Button>
               </HStack>
             )}
@@ -219,7 +223,9 @@ const ListingViewPage: FC = () => {
             </HStack>
             <HStack>
               <Icon as={FaRoad} boxSize={{ md: 6 }} />
-              <Text>{listing?.item.mileage?.toLocaleString()} mil.</Text>
+              <Text>
+                {listing?.item.mileage?.toLocaleString()} {t('listings.mileageUnit')}
+              </Text>
             </HStack>
           </Stack>
           <Stack>
@@ -235,7 +241,7 @@ const ListingViewPage: FC = () => {
         </Stack>
         <Box>
           <HStack justify="space-between" align="center" mb={4}>
-            <Heading size="md">Details</Heading>
+            <Heading size="md">{t('listings.details')}</Heading>
             <Button
               leftIcon={<Icon as={FaEnvelope} />}
               colorScheme="blue"
@@ -243,7 +249,7 @@ const ListingViewPage: FC = () => {
               size="sm"
               onClick={onOpen}
             >
-              Contact
+              {t('listings.contact')}
             </Button>
           </HStack>
           <Box justifyContent="space-between">
@@ -263,7 +269,7 @@ const ListingViewPage: FC = () => {
                   backgroundColor={editBtnBg}
                   onClick={() => router.push(`/listings/${listing?._id}/edit`)}
                 >
-                  Edit
+                  {t('listings.edit')}
                 </Button>
                 <Button
                   leftIcon={<DeleteIcon />}
@@ -272,7 +278,7 @@ const ListingViewPage: FC = () => {
                     // TODO: implement delete
                   }}
                 >
-                  Delete
+                  {t('listings.delete')}
                 </Button>
               </VStack>
             )}
@@ -288,3 +294,18 @@ const ListingViewPage: FC = () => {
 };
 
 export default ListingViewPage;
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking'
+  };
+};
