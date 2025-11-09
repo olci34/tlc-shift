@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import CldImageWithFallback from '../cloudinary/cld-image-with-fallback';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 export interface ListingCardProps {
   listing: Listing;
@@ -20,6 +21,7 @@ export interface ListingCardProps {
 }
 
 export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) => {
+  const t = useTranslations();
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const priceColor = useColorModeValue('green.600', 'green.300');
   const subTextColor = useColorModeValue('gray.600', 'gray.400');
@@ -68,7 +70,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) =>
             colorScheme="blue"
             fontSize={{ base: '2xs', sm: 'xs' }}
           >
-            Plate
+            {t('listings.plateBadge')}
           </Badge>
         )}
       </Box>
@@ -83,7 +85,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) =>
               ${listing.price}
             </Text>
             <Text fontSize={{ base: '2xs', sm: 'xs' }} color={subTextColor}>
-              / week
+              {t('listings.pricePerWeek')}
             </Text>
           </HStack>
 

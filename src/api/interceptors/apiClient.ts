@@ -10,8 +10,13 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(async (request) => {
   const session = await getSession();
+  console.log('Session in interceptor:', session);
   if (session && session.user?.accessToken) {
-    request.headers.Authorization = `${session.user.tokenType} ${session.user.accessToken}`;
+    const authHeader = `${session.user.tokenType} ${session.user.accessToken}`;
+    console.log('Setting Authorization header:', authHeader);
+    request.headers.Authorization = authHeader;
+  } else {
+    console.log('No session or accessToken found');
   }
 
   // Remove Content-Type header for FormData requests to let browser set it with boundary

@@ -80,8 +80,11 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
     } as Listing;
 
     if (e.currentTarget.name === 'listing_category') {
-      updatedState.item =
-        e.currentTarget.value === 'Vehicle' ? createVehicleState() : createPlateState();
+      if (e.currentTarget.value === 'Vehicle') {
+        updatedState.item = createVehicleState();
+      } else if (e.currentTarget.value === 'Plate') {
+        updatedState.item = createPlateState();
+      }
     }
 
     setListingData(updatedState);
@@ -235,7 +238,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
       isValid = false;
     }
 
-    if (listingData.images.length === 0) {
+    if (listingData.images.length === 0 && listingData.transaction_type !== 'Rental') {
       setImagesError('Please upload at least one photo.');
       isValid = false;
     }
@@ -483,7 +486,11 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         </FormControl>
       </Stack>
       <VStack>
-        <FormControl isRequired isInvalid={!!imagesError} width="full">
+        <FormControl
+          isRequired={listingData.transaction_type !== 'Rental'}
+          isInvalid={!!imagesError}
+          width="full"
+        >
           <FormLabel>Photos</FormLabel>
           <ImageUploader handleFileSelect={handleFileSelect} />
           {listingData.images.length > 0 && (
@@ -510,7 +517,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
           <FormErrorMessage>{imagesError}</FormErrorMessage>
         </FormControl>
       </VStack>
-      <Stack direction={{ base: 'column', md: 'row' }}>
+      <Stack direction={{ base: 'column', md: 'row' }} mt={4}>
         <Button onClick={submitListing}>
           {listingData._id ? 'Save Listing' : 'Create Listing'}
         </Button>

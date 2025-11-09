@@ -21,6 +21,9 @@ import {
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { IoFilter } from 'react-icons/io5';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 export interface CarFilter {
   make?: string;
@@ -32,6 +35,7 @@ export interface CarFilter {
 
 const ListingsPage = () => {
   const router = useRouter();
+  const t = useTranslations();
   const numPerPage = 21;
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -75,7 +79,7 @@ const ListingsPage = () => {
     <Box>
       <Button variant="ghost" onClick={onToggle}>
         <Icon as={IoFilter} marginRight={1} />
-        Filter
+        {t('common.filter')}
       </Button>
       <Button
         float="right"
@@ -83,7 +87,7 @@ const ListingsPage = () => {
         backgroundColor={useColorModeValue('green.600', 'green.300')}
         onClick={() => router.push('/listings/create')}
       >
-        New Listing
+        {t('listings.newListing')}
       </Button>
 
       {/* Filters */}
@@ -91,7 +95,7 @@ const ListingsPage = () => {
         <Stack direction={{ base: 'column', md: 'row' }} spacing={4} my={4} align="flex-start">
           <FormControl>
             <Select
-              placeholder="Make"
+              placeholder={t('listings.makeFilter')}
               name="make"
               value={carFilter?.make}
               onChange={handleFilterChange}
@@ -105,7 +109,7 @@ const ListingsPage = () => {
           </FormControl>
           <FormControl>
             <Select
-              placeholder="Model"
+              placeholder={t('listings.modelFilter')}
               name="model"
               isDisabled={!carFilter?.make}
               value={carFilter?.model}
@@ -118,7 +122,7 @@ const ListingsPage = () => {
             <FormControl>
               <Select
                 width="100px"
-                placeholder="Min"
+                placeholder={t('listings.minYearFilter')}
                 name="minYear"
                 value={carFilter?.minYear}
                 onChange={(e) => {
@@ -139,7 +143,7 @@ const ListingsPage = () => {
             <FormControl>
               <Select
                 width="100px"
-                placeholder="Max"
+                placeholder={t('listings.maxYearFilter')}
                 name="maxYear"
                 value={carFilter?.maxYear || ''}
                 onChange={(e) => {
@@ -160,16 +164,16 @@ const ListingsPage = () => {
 
           <FormControl flexShrink={0} width={{ base: 'full', sm: '230px' }}>
             <Select
-              placeholder="Select mileage range"
+              placeholder={t('listings.mileageFilter')}
               value={carFilter?.mileageRange}
               name="mileageRange"
               onChange={handleFilterChange}
             >
-              <option value="0-50000">0 - 50,000 miles</option>
-              <option value="50000-100000">50,000 - 100,000 miles</option>
-              <option value="100000-150000">100,000 - 150,000 miles</option>
-              <option value="150000-200000">150,000 - 200,000 miles</option>
-              <option value="200000+">200,000+ miles</option>
+              <option value="0-50000">{t('listings.mileageRange1')}</option>
+              <option value="50000-100000">{t('listings.mileageRange2')}</option>
+              <option value="100000-150000">{t('listings.mileageRange3')}</option>
+              <option value="150000-200000">{t('listings.mileageRange4')}</option>
+              <option value="200000+">{t('listings.mileageRange5')}</option>
             </Select>
           </FormControl>
           <Button
@@ -179,7 +183,7 @@ const ListingsPage = () => {
           >
             <Search2Icon />
             <Show below="sm">
-              <Text mx={1}>Search</Text>
+              <Text mx={1}>{t('common.search')}</Text>
             </Show>
           </Button>
         </Stack>
@@ -206,6 +210,14 @@ const ListingsPage = () => {
       <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
     </Box>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
 };
 
 export default ListingsPage;

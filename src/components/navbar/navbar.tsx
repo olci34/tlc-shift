@@ -26,6 +26,8 @@ import { MoonIcon, SunIcon, HamburgerIcon } from '@chakra-ui/icons';
 import { signOut, useSession } from 'next-auth/react';
 import { AUTH_STATUS } from '@/lib/utils/auth';
 import AccountMenu from './account-menu';
+import LanguageSwitcher from './language-switcher';
+import { useTranslations } from 'next-intl';
 
 const NavBar = () => {
   const router = useRouter();
@@ -33,6 +35,7 @@ const NavBar = () => {
   const isHamburger = useBreakpointValue({ base: true, md: false });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { status } = useSession();
+  const t = useTranslations();
   const logout = () => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     signOut({ callbackUrl: API_URL });
@@ -54,7 +57,7 @@ const NavBar = () => {
         {isHamburger ? (
           <>
             <IconButton
-              aria-label="Open Navigation"
+              aria-label={t('nav.openNavigation')}
               icon={<HamburgerIcon />}
               onClick={onOpen}
               variant="ghost"
@@ -66,12 +69,12 @@ const NavBar = () => {
               <DrawerContent>
                 <DrawerCloseButton />
                 <DrawerHeader>
-                  <Text size="lg">TLC Shift</Text>
+                  <Text size="lg">{t('common.appName')}</Text>
                 </DrawerHeader>
                 <DrawerBody>
                   <Stack direction="column" spacing={4}>
                     <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
-                      Home
+                      {t('nav.home')}
                     </NavLinkItem>
                     <NavLinkItem
                       href="/trips"
@@ -79,7 +82,7 @@ const NavBar = () => {
                       prefetch={false}
                       onClick={onClose}
                     >
-                      Trips
+                      {t('nav.trips')}
                     </NavLinkItem>
                     {/* <NavLinkItem
                       href="/earnings"
@@ -87,7 +90,7 @@ const NavBar = () => {
                       prefetch={false}
                       onClick={onClose}
                     >
-                      Earnings
+                      {t('nav.earnings')}
                     </NavLinkItem> */}
                     {/* <NavLinkItem
                       href="/about"
@@ -95,7 +98,7 @@ const NavBar = () => {
                       prefetch={false}
                       onClick={onClose}
                     >
-                      About
+                      {t('nav.about')}
                     </NavLinkItem> */}
                     <NavLinkItem
                       href="/listings"
@@ -103,40 +106,47 @@ const NavBar = () => {
                       prefetch={false}
                       onClick={onClose}
                     >
-                      Listings
+                      {t('nav.listings')}
                     </NavLinkItem>
-                    <HStack p={2}>
-                      <Icon as={MoonIcon} boxSize={6} />
-                      <Switch aria-label="Toggle color mode" size="lg" onChange={toggleColorMode} />
-                      <Icon as={SunIcon} boxSize={6} />
+                    <HStack p={2} justify="space-between">
+                      <HStack>
+                        <Icon as={MoonIcon} boxSize={6} />
+                        <Switch
+                          aria-label={t('nav.toggleColorMode')}
+                          size="lg"
+                          onChange={toggleColorMode}
+                        />
+                        <Icon as={SunIcon} boxSize={6} />
+                      </HStack>
+                      <LanguageSwitcher />
                     </HStack>
                   </Stack>
                 </DrawerBody>
               </DrawerContent>
             </Drawer>
             <Heading size="lg" display="inline">
-              TLC Shift
+              {t('common.appName')}
             </Heading>
           </>
         ) : (
           <Flex gap={4}>
             <Heading size="lg" display="inline">
-              TLC Shift
+              {t('common.appName')}
             </Heading>
             <NavLinkItem href="/" path={router.asPath} prefetch={false} onClick={onClose}>
-              Home
+              {t('nav.home')}
             </NavLinkItem>
             <NavLinkItem href="/trips" path={router.asPath} prefetch={false} onClick={onClose}>
-              Trips
+              {t('nav.trips')}
             </NavLinkItem>
             {/* <NavLinkItem href="/earnings" path={router.asPath} prefetch={false} onClick={onClose}>
-              Earnings
+              {t('nav.earnings')}
             </NavLinkItem>
             <NavLinkItem href="/about" path={router.asPath} prefetch={false} onClick={onClose}>
-              About
+              {t('nav.about')}
             </NavLinkItem> */}
             <NavLinkItem href="/listings" path={router.asPath} prefetch={false} onClick={onClose}>
-              Listings
+              {t('nav.listings')}
             </NavLinkItem>
           </Flex>
         )}
@@ -148,20 +158,23 @@ const NavBar = () => {
               prefetch={false}
               onClick={onClose}
             >
-              Login
+              {t('common.login')}
             </NavLinkItem>
           ) : (
             <AccountMenu />
           )}
           {!isHamburger && (
-            <IconButton
-              aria-label="Toggle color mode"
-              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              variant="ghost"
-              colorScheme="gray"
-              size="md"
-              onClick={toggleColorMode}
-            />
+            <>
+              <LanguageSwitcher />
+              <IconButton
+                aria-label={t('nav.toggleColorMode')}
+                icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                variant="ghost"
+                colorScheme="gray"
+                size="md"
+                onClick={toggleColorMode}
+              />
+            </>
           )}
         </Box>
       </Flex>

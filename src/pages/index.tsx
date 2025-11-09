@@ -35,10 +35,14 @@ import Link from 'next/link';
 import { AddIcon, EmailIcon, CheckCircleIcon, SearchIcon } from '@chakra-ui/icons';
 import { FaCar, FaMapMarkedAlt, FaTags } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { GetStaticProps } from 'next';
+import { getMessages } from '@/lib/utils/i18n';
 
 export default function Home() {
   const router = useRouter();
   const toast = useToast();
+  const t = useTranslations();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [emailError, setEmailError] = useState(false);
@@ -82,8 +86,8 @@ export default function Home() {
     if (featureRequest.trim().length > 0) {
       console.log('Feature request:', featureRequest);
       toast({
-        title: 'Thank you for your feedback!',
-        description: 'We appreciate your input and will consider your request.',
+        title: t('home.feedbackSuccess'),
+        description: t('home.feedbackSuccessDescription'),
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -92,8 +96,8 @@ export default function Home() {
       setFeatureRequest('');
     } else {
       toast({
-        title: 'Please enter a feature request',
-        description: "Tell us what you'd like to see in TLC Shift.",
+        title: t('home.feedbackWarning'),
+        description: t('home.feedbackWarningDescription'),
         status: 'warning',
         duration: 3000,
         isClosable: true,
@@ -122,14 +126,13 @@ export default function Home() {
       >
         <VStack spacing={6} textAlign="center" maxW="3xl" mx="auto">
           <Badge colorScheme="green" fontSize="sm" px={3} py={1} borderRadius="full">
-            TLC Driver&apos;s Marketplace
+            {t('home.badge')}
           </Badge>
           <Heading size={{ base: 'xl', md: '2xl' }} fontWeight="bold">
-            Your Complete TLC Business Solution
+            {t('home.heroTitle')}
           </Heading>
           <Text fontSize={{ base: 'lg', md: 'xl' }} color={textColor} maxW="2xl">
-            Find rental vehicles, discover busy areas with historic data, and unlock exclusive
-            discounts on auto parts, maintenance, and services.
+            {t('home.heroDescription')}
           </Text>
           <HStack spacing={4} flexWrap="wrap" justify="center">
             <Button
@@ -138,7 +141,7 @@ export default function Home() {
               leftIcon={<SearchIcon />}
               onClick={() => router.push('/listings')}
             >
-              Browse Rentals
+              {t('home.browseRentals')}
             </Button>
             <Button
               size="lg"
@@ -147,7 +150,7 @@ export default function Home() {
               leftIcon={<AddIcon />}
               onClick={() => router.push('/listings/create')}
             >
-              List Your Vehicle
+              {t('home.listYourVehicle')}
             </Button>
           </HStack>
         </VStack>
@@ -211,42 +214,40 @@ export default function Home() {
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} alignItems="center">
           <VStack align="start" spacing={4}>
             <Badge colorScheme="green" fontSize="md" px={3} py={1} borderRadius="full">
-              Limited Time Offer
+              {t('home.waitlistBadge')}
             </Badge>
-            <Heading size={{ base: 'lg', md: 'xl' }}>
-              Join the Waitlist for Exclusive Discounts
-            </Heading>
+            <Heading size={{ base: 'lg', md: 'xl' }}>{t('home.waitlistTitle')}</Heading>
             <Text fontSize="lg" color={textColor}>
-              Get early access to significant savings on:
+              {t('home.waitlistDescription')}
             </Text>
             <List spacing={3}>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
                 <Text as="span" fontWeight="medium">
-                  Auto parts & tires
+                  {t('home.waitlistBenefit1')}
                 </Text>{' '}
-                - Up to 30% off
+                - {t('home.waitlistBenefit1Detail')}
               </ListItem>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
                 <Text as="span" fontWeight="medium">
-                  Maintenance & repairs
+                  {t('home.waitlistBenefit2')}
                 </Text>{' '}
-                - Exclusive partner rates
+                - {t('home.waitlistBenefit2Detail')}
               </ListItem>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
                 <Text as="span" fontWeight="medium">
-                  Insurance & registration
+                  {t('home.waitlistBenefit3')}
                 </Text>{' '}
-                - Special member pricing
+                - {t('home.waitlistBenefit3Detail')}
               </ListItem>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
                 <Text as="span" fontWeight="medium">
-                  Car wash & detailing
+                  {t('home.waitlistBenefit4')}
                 </Text>{' '}
-                - Monthly discounts
+                - {t('home.waitlistBenefit4Detail')}
               </ListItem>
             </List>
           </VStack>
@@ -254,10 +255,10 @@ export default function Home() {
           <Box bg={featureBg} p={6} borderRadius="lg" shadow="lg">
             <VStack spacing={4} align="stretch">
               <Heading size="md" textAlign="center">
-                Reserve Your Spot
+                {t('home.reserveSpot')}
               </Heading>
               <Text color={textColor} textAlign="center" fontSize="sm">
-                Join thousands of TLC drivers already saving money. No commitment required.
+                {t('home.waitlistSubtext')}
               </Text>
               <FormControl isRequired isInvalid={emailError}>
                 <InputGroup size="lg">
@@ -268,18 +269,18 @@ export default function Home() {
                     variant="filled"
                     name="email"
                     type="email"
-                    placeholder="Enter your email address"
+                    placeholder={t('home.waitlistEmailPlaceholder')}
                     ref={newsletterEmail}
                     _focus={{ bg: useColorModeValue('white', 'gray.700') }}
                   />
                 </InputGroup>
-                <FormErrorMessage>Please enter a valid email address</FormErrorMessage>
+                <FormErrorMessage>{t('home.waitlistEmailError')}</FormErrorMessage>
               </FormControl>
               <Button colorScheme="green" size="lg" onClick={handleNewsletter} width="full">
-                Join Waitlist
+                {t('home.joinWaitlist')}
               </Button>
               <Text fontSize="xs" color={textColor} textAlign="center">
-                We respect your privacy. Unsubscribe anytime.
+                {t('home.waitlistPrivacy')}
               </Text>
             </VStack>
           </Box>
@@ -289,7 +290,7 @@ export default function Home() {
       {/* Main Features Grid */}
       <Box mb={12}>
         <Heading size="lg" mb={6} textAlign="center">
-          Our Services
+          {t('home.servicesTitle')}
         </Heading>
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
           {/* Feature 1: Browse Rentals */}
@@ -306,13 +307,10 @@ export default function Home() {
           >
             <VStack align="start" spacing={4}>
               <Icon as={FaCar} boxSize={10} color={accentColor} />
-              <Heading size="md">Find Your Perfect Rental</Heading>
-              <Text color={textColor}>
-                Browse hundreds of TLC-plated vehicles available for rent. Filter by make, model,
-                year, and mileage to find exactly what you need.
-              </Text>
+              <Heading size="md">{t('home.feature1Title')}</Heading>
+              <Text color={textColor}>{t('home.feature1Description')}</Text>
               <Button variant="link" color={accentColor} rightIcon={<SearchIcon />}>
-                Browse Listings
+                {t('home.feature1Action')}
               </Button>
             </VStack>
           </Box>
@@ -331,13 +329,10 @@ export default function Home() {
           >
             <VStack align="start" spacing={4}>
               <Icon as={FaMapMarkedAlt} boxSize={10} color={accentColor} />
-              <Heading size="md">Find Busy Areas</Heading>
-              <Text color={textColor}>
-                Maximize your earnings with our heat map showing high-demand areas based on
-                historical Uber and Lyft trip data across NYC.
-              </Text>
+              <Heading size="md">{t('home.feature2Title')}</Heading>
+              <Text color={textColor}>{t('home.feature2Description')}</Text>
               <Button variant="link" color={accentColor} rightIcon={<SearchIcon />}>
-                View Map
+                {t('home.feature2Action')}
               </Button>
             </VStack>
           </Box>
@@ -356,13 +351,10 @@ export default function Home() {
           >
             <VStack align="start" spacing={4}>
               <Icon as={AddIcon} boxSize={10} color={accentColor} />
-              <Heading size="md">List Your Vehicle</Heading>
-              <Text color={textColor}>
-                Have a spare car or TLC plate? List it in minutes and start earning passive income
-                by renting to verified drivers.
-              </Text>
+              <Heading size="md">{t('home.feature3Title')}</Heading>
+              <Text color={textColor}>{t('home.feature3Description')}</Text>
               <Button variant="link" color={accentColor} rightIcon={<AddIcon />}>
-                Create Listing
+                {t('home.feature3Action')}
               </Button>
             </VStack>
           </Box>
@@ -379,25 +371,22 @@ export default function Home() {
       >
         <VStack spacing={4} align="stretch" maxW="2xl" mx="auto">
           <VStack spacing={2} textAlign="center">
-            <Heading size="lg">Tell Us What You Need</Heading>
-            <Text color={textColor}>
-              Your feedback helps us build features that matter most to TLC drivers. Share your
-              ideas and suggestions with us.
-            </Text>
+            <Heading size="lg">{t('home.feedbackTitle')}</Heading>
+            <Text color={textColor}>{t('home.feedbackDescription')}</Text>
           </VStack>
 
           <FormControl>
             <Textarea
               value={featureRequest}
               onChange={(e) => setFeatureRequest(e.target.value)}
-              placeholder="I want to see..."
+              placeholder={t('home.feedbackPlaceholder')}
               rows={4}
               resize="vertical"
               maxLength={500}
               bg={useColorModeValue('white', 'gray.700')}
             />
             <Text fontSize="xs" color={textColor} textAlign="right" mt={1}>
-              {featureRequest.length}/500 characters
+              {t('home.feedbackCharCount', { count: featureRequest.length })}
             </Text>
           </FormControl>
 
@@ -408,14 +397,22 @@ export default function Home() {
             width={{ base: 'full', sm: 'auto' }}
             alignSelf="center"
           >
-            Submit Feedback
+            {t('home.feedbackSubmit')}
           </Button>
 
           <Text fontSize="xs" color={textColor} textAlign="center">
-            We review all feedback and use it to improve TLC Shift for our community.
+            {t('home.feedbackDisclaimer')}
           </Text>
         </VStack>
       </Box>
     </VStack>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      messages: await getMessages(locale ?? 'en')
+    }
+  };
+};
