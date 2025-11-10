@@ -30,5 +30,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/signup-login', '/listings/create']
+  matcher: ['/signup-login', '/listings/create', '/my-listings']
 };

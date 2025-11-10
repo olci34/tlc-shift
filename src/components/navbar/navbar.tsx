@@ -14,16 +14,14 @@ import {
   Stack,
   Text,
   Heading,
-  VStack,
   Icon,
   Switch,
-  HStack,
-  Button
+  HStack
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NavLinkItem from './nav-link-item';
 import { MoonIcon, SunIcon, HamburgerIcon } from '@chakra-ui/icons';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { AUTH_STATUS } from '@/lib/utils/auth';
 import AccountMenu from './account-menu';
 import LanguageSwitcher from './language-switcher';
@@ -36,10 +34,6 @@ const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { status } = useSession();
   const t = useTranslations();
-  const logout = () => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    signOut({ callbackUrl: API_URL });
-  };
 
   return (
     <Box

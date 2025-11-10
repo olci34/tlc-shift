@@ -1,12 +1,4 @@
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-  LinkBox,
-  MenuDivider
-} from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuItem, IconButton, MenuDivider } from '@chakra-ui/react';
 import { FaUserCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
@@ -16,8 +8,7 @@ import { useTranslations } from 'next-intl';
 const AccountMenu = () => {
   const t = useTranslations();
   const logout = () => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    signOut({ callbackUrl: API_URL });
+    signOut({ callbackUrl: '/signup-login' });
   };
 
   return (
@@ -40,9 +31,7 @@ const AccountMenu = () => {
           <MenuItem icon={<AddIcon />}>{t('nav.newListing')}</MenuItem>
         </Link>{' '}
         <MenuDivider />
-        <MenuItem>
-          <LinkBox onClick={logout}>{t('common.logout')}</LinkBox>
-        </MenuItem>
+        <MenuItem onClick={logout}>{t('common.logout')}</MenuItem>
       </MenuList>
     </Menu>
   );

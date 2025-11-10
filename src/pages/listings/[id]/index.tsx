@@ -1,4 +1,5 @@
 import { getListing } from '@/api/getListing';
+import { deleteListing } from '@/api/deleteListing';
 import { Listing } from '@/lib/interfaces/Listing';
 import { ArrowLeftIcon, ArrowRightIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
@@ -14,11 +15,18 @@ import {
   useColorModeValue,
   Show,
   VStack,
-  useDisclosure
+  useDisclosure,
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay
 } from '@chakra-ui/react';
 import CldImageWithFallback from '@/components/cloudinary/cld-image-with-fallback';
 import { useRouter } from 'next/router';
-import { FC, useEffect, useState, useMemo } from 'react';
+import { FC, useEffect, useState, useMemo, useRef } from 'react';
 import { FaCar, FaHammer, FaRoad, FaGasPump, FaLocationDot, FaEnvelope } from 'react-icons/fa6';
 import { useSession } from 'next-auth/react';
 import ContactModal from '@/components/contact-modal';
@@ -30,14 +38,22 @@ const ListingViewPage: FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const t = useTranslations();
+  const toast = useToast();
   const [listing, setListing] = useState<Listing>();
   const { id } = router.query;
   const [imageIdx, setImageIdx] = useState<number>(0);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const loggedInUserId = useMemo(() => (session?.user as any)?.id, [session]);
   const editBtnBg = useColorModeValue('green.600', 'green.300');
   const deleteBtnBg = useColorModeValue('red.600', 'red.300');
   const priceColor = useColorModeValue('green.600', 'green.300');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteDialogOpen,
+    onOpen: onDeleteDialogOpen,
+    onClose: onDeleteDialogClose
+  } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const formatDate = (date?: Date) => {
     if (!date) return '';
 
@@ -55,6 +71,43 @@ const ListingViewPage: FC = () => {
 
     fetchListing();
   }, [id]);
+
+  const handleDeleteClick = () => {
+    onDeleteDialogOpen();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!listing?._id) return;
+
+    onDeleteDialogClose();
+    setIsDeleting(true);
+
+    try {
+      await deleteListing(listing._id);
+
+      toast({
+        title: t('listings.deleteSuccess'),
+        description: t('listings.deleteSuccessDescription'),
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      });
+
+      // Redirect to my listings page
+      router.push('/my-listings');
+    } catch (error: any) {
+      toast({
+        title: t('listings.deleteError'),
+        description: error?.message || t('listings.deleteErrorDescription'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      });
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <Box>
@@ -97,9 +150,9 @@ const ListingViewPage: FC = () => {
                 <Button
                   leftIcon={<DeleteIcon />}
                   backgroundColor={deleteBtnBg}
-                  onClick={() => {
-                    // TODO: implement delete
-                  }}
+                  onClick={handleDeleteClick}
+                  isLoading={isDeleting}
+                  loadingText={t('listings.deleting')}
                 >
                   {t('listings.delete')}
                 </Button>
@@ -274,9 +327,9 @@ const ListingViewPage: FC = () => {
                 <Button
                   leftIcon={<DeleteIcon />}
                   backgroundColor={deleteBtnBg}
-                  onClick={() => {
-                    // TODO: implement delete
-                  }}
+                  onClick={handleDeleteClick}
+                  isLoading={isDeleting}
+                  loadingText={t('listings.deleting')}
                 >
                   {t('listings.delete')}
                 </Button>
@@ -289,6 +342,31 @@ const ListingViewPage: FC = () => {
       <Divider />
 
       <ContactModal isOpen={isOpen} onClose={onClose} contact={listing?.contact} />
+
+      <AlertDialog
+        isOpen={isDeleteDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onDeleteDialogClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              {t('listings.deleteDialogTitle')}
+            </AlertDialogHeader>
+
+            <AlertDialogBody>{t('listings.deleteDialogMessage')}</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onDeleteDialogClose}>
+                {t('listings.deleteDialogCancel')}
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
+                {t('listings.deleteDialogConfirm')}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
