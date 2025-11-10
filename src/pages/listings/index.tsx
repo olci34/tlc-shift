@@ -191,11 +191,7 @@ const ListingsPage = () => {
 
       {/* Listing Tiles */}
       <Box paddingY={2}>
-        <SimpleGrid
-          columns={{ base: 2, sm: 3, md: 3, lg: 4 }}
-          spacing={{ base: 3, sm: 4, md: 5 }}
-          justifyItems="center"
-        >
+        <SimpleGrid columns={{ base: 2, sm: 3, md: 3, lg: 4 }} spacing={{ base: 3, sm: 4, md: 5 }}>
           {listings?.map((listing) => (
             <ListingCard
               key={listing._id}

@@ -4,8 +4,6 @@ import {
   HStack,
   Text,
   Skeleton,
-  Stack,
-  Image,
   useColorModeValue,
   Button,
   Input,
@@ -13,15 +11,12 @@ import {
   FormErrorMessage,
   InputGroup,
   InputLeftElement,
-  InputRightElement,
   VStack,
   SimpleGrid,
-  Container,
   Icon,
   List,
   ListItem,
   ListIcon,
-  Flex,
   Badge,
   Textarea,
   useToast
@@ -31,13 +26,13 @@ import { useRouter } from 'next/router';
 import { ListingCard } from '@/components/listing/listing-card';
 import { getListings, ListingResponse } from '@/api/getListings';
 import { Listing } from '@/lib/interfaces/Listing';
-import Link from 'next/link';
 import { AddIcon, EmailIcon, CheckCircleIcon, SearchIcon } from '@chakra-ui/icons';
-import { FaCar, FaMapMarkedAlt, FaTags } from 'react-icons/fa';
+import { FaCar, FaMapMarkedAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { GetStaticProps } from 'next';
 import { getMessages } from '@/lib/utils/i18n';
+import { joinWaitlist } from '@/api/joinWaitlist';
 
 export default function Home() {
   const router = useRouter();
@@ -47,6 +42,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [emailError, setEmailError] = useState(false);
   const [featureRequest, setFeatureRequest] = useState('');
+  const [joiningWaitlist, setJoiningWaitlist] = useState(false);
   const newsletterEmail = useRef<HTMLInputElement>(null);
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,19 +68,48 @@ export default function Home() {
     router.push(`/listings/${listingId}`);
   };
 
-  const handleNewsletter = () => {
+  const handleNewsletter = async () => {
     const email = newsletterEmail.current?.value;
-    if (email && emailRegex.test(email)) {
-      setEmailError(false);
-      console.log(email);
-    } else {
+
+    if (!email || !emailRegex.test(email)) {
       setEmailError(true);
+      return;
+    }
+
+    setEmailError(false);
+    setJoiningWaitlist(true);
+
+    try {
+      await joinWaitlist(email);
+
+      toast({
+        title: t('home.waitlistSuccess'),
+        description: t('home.waitlistSuccessDescription'),
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      });
+
+      if (newsletterEmail.current) {
+        newsletterEmail.current.value = '';
+      }
+    } catch (error: any) {
+      toast({
+        title: t('home.waitlistError'),
+        description: error?.response?.data?.detail || t('home.waitlistErrorDescription'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
+      });
+    } finally {
+      setJoiningWaitlist(false);
     }
   };
 
   const handleFeatureRequest = () => {
     if (featureRequest.trim().length > 0) {
-      console.log('Feature request:', featureRequest);
       toast({
         title: t('home.feedbackSuccess'),
         description: t('home.feedbackSuccessDescription'),
@@ -187,15 +212,19 @@ export default function Home() {
                         />
                       </Box>
                     ))
-                  : listings
-                      .slice(0, 6)
-                      .map((listing) => (
+                  : listings.slice(0, 6).map((listing) => (
+                      <Box
+                        key={listing._id}
+                        minWidth={{ base: '160px', sm: '220px', md: '250px' }}
+                        maxWidth={{ base: '180px', sm: '280px', md: '320px' }}
+                        flexShrink={0}
+                      >
                         <ListingCard
-                          key={listing._id}
                           listing={listing}
                           onClick={() => handleListingClick(listing._id!)}
                         />
-                      ))}
+                      </Box>
+                    ))}
               </HStack>
             </motion.div>
           </Box>
@@ -276,7 +305,14 @@ export default function Home() {
                 </InputGroup>
                 <FormErrorMessage>{t('home.waitlistEmailError')}</FormErrorMessage>
               </FormControl>
-              <Button colorScheme="green" size="lg" onClick={handleNewsletter} width="full">
+              <Button
+                colorScheme="green"
+                size="lg"
+                onClick={handleNewsletter}
+                width="full"
+                isLoading={joiningWaitlist}
+                loadingText={t('home.joiningWaitlist')}
+              >
                 {t('home.joinWaitlist')}
               </Button>
               <Text fontSize="xs" color={textColor} textAlign="center">

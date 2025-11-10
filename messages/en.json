@@ -14,7 +14,7 @@
     "listings": "Listings",
     "myAccount": "My Account",
     "myListings": "My Listings",
-    "newListing": "New Listing",
+    "newListing": "Add Listing",
     "toggleColorMode": "Toggle color mode",
     "openNavigation": "Open Navigation"
   },
@@ -37,6 +37,11 @@
     "waitlistBenefit4Detail": "Monthly discounts",
     "reserveSpot": "Reserve Your Spot",
     "joinWaitlist": "Join Waitlist",
+    "joiningWaitlist": "Joining...",
+    "waitlistSuccess": "Successfully joined the waitlist!",
+    "waitlistSuccessDescription": "Thank you for joining! We'll notify you when exclusive discounts become available.",
+    "waitlistError": "Unable to join waitlist",
+    "waitlistErrorDescription": "Something went wrong. Please try again later.",
     "waitlistEmailPlaceholder": "Enter your email address",
     "waitlistEmailError": "Please enter a valid email address",
     "waitlistPrivacy": "We respect your privacy. Unsubscribe anytime.",
@@ -63,7 +68,7 @@
     "feedbackWarningDescription": "Tell us what you'd like to see in TLC Shift."
   },
   "listings": {
-    "newListing": "New Listing",
+    "newListing": "Add Listing",
     "makeFilter": "Make",
     "modelFilter": "Model",
     "minYearFilter": "Min",
@@ -110,7 +115,7 @@
   },
   "myListings": {
     "title": "My Listings",
-    "newListing": "New Listing"
+    "newListing": "Add Listing"
   },
   "contactModal": {
     "title": "Contact Information",

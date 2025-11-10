@@ -1,6 +1,14 @@
 import { getUserListings } from '@/api/getUserListings';
 import { Listing } from '@/lib/interfaces/Listing';
-import { Box, Heading, Skeleton, Stack, Button, useColorModeValue, HStack } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Skeleton,
+  SimpleGrid,
+  Button,
+  useColorModeValue,
+  HStack
+} from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -56,7 +64,7 @@ const UserListingsPage: FC = () => {
         </Button>
       </HStack>
       <Box paddingY={2}>
-        <Stack direction={{ base: 'column', sm: 'row' }} wrap="wrap" justify="flex-start">
+        <SimpleGrid columns={{ base: 2, sm: 3, md: 3, lg: 4 }} spacing={{ base: 3, sm: 4, md: 5 }}>
           {isLoading
             ? Array.from({ length: 3 }).map((_, idx) => (
                 <Skeleton key={`skt-${idx}`} height={150} borderRadius="md" />
@@ -70,7 +78,7 @@ const UserListingsPage: FC = () => {
                   }}
                 />
               ))}
-        </Stack>
+        </SimpleGrid>
       </Box>
       <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
     </Box>

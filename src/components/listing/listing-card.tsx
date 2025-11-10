@@ -28,8 +28,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onClick }) =>
 
   return (
     <Card
-      minWidth={{ base: '160px', sm: '220px', md: '250px' }}
-      maxWidth={{ base: '180px', sm: '280px', md: '320px' }}
+      width="full"
+      maxWidth="320px"
       direction="column"
       borderRadius="lg"
       overflow="hidden"
