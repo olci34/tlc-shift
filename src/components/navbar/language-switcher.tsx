@@ -7,7 +7,19 @@ const LanguageSwitcher = () => {
   const { locale, pathname, asPath, query } = router;
 
   const changeLanguage = (newLocale: string) => {
-    router.push({ pathname, query }, asPath, { locale: newLocale });
+    const currentLocale = router.locale || 'en';
+    let path = router.asPath;
+
+    // Remove current locale prefix if it exists in the path
+    if (currentLocale !== 'en' && path.startsWith(`/${currentLocale}`)) {
+      path = path.substring(`/${currentLocale}`.length) || '/';
+    }
+
+    // Add new locale prefix if it's not the default locale (en)
+    const newPath = newLocale === 'en' ? path : `/${newLocale}${path}`;
+
+    // Use window.location for a full page reload to ensure all content updates
+    window.location.href = newPath;
   };
 
   return (
