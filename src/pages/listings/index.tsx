@@ -1,7 +1,8 @@
 import { getListings } from '@/api/getListings';
 import { ListingCard } from '@/components/listing/listing-card';
+import { EmptyListingsState } from '@/components/listing/empty-listings-state';
 import Paginator from '@/components/paginator/paginator';
-import { USCarBrand } from '@/lib/constants/car-brands';
+import { CarModels, USCarBrand } from '@/lib/constants/car-brands';
 import { Listing } from '@/lib/interfaces/Listing';
 import { AddIcon, Search2Icon } from '@chakra-ui/icons';
 import {
@@ -46,6 +47,11 @@ const ListingsPage = () => {
 
   const handleFilterChange = (e: React.FormEvent<HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
+
+    if (name === 'make') {
+      carFilter.model = CarModels[e.currentTarget.value as keyof typeof CarModels]?.[0];
+    }
+
     setCarFilter({ ...carFilter, [name]: value });
   };
 
@@ -115,7 +121,11 @@ const ListingsPage = () => {
               value={carFilter?.model}
               onChange={handleFilterChange}
             >
-              {/* Models would be populated based on selected brand */}
+              {CarModels[carFilter.make as keyof typeof CarModels]?.map((model: string) => (
+                <option value={model} key={model}>
+                  {model}
+                </option>
+              ))}
             </Select>
           </FormControl>
           <Stack direction="row" spacing={2}>
@@ -191,19 +201,32 @@ const ListingsPage = () => {
 
       {/* Listing Tiles */}
       <Box paddingY={2}>
-        <SimpleGrid columns={{ base: 2, sm: 3, md: 3, lg: 4 }} spacing={{ base: 3, sm: 4, md: 5 }}>
-          {listings?.map((listing) => (
-            <ListingCard
-              key={listing._id}
-              listing={listing}
-              onClick={() => {
-                if (listing._id) router.push(`/listings/${listing._id}`);
-              }}
-            />
-          ))}
-        </SimpleGrid>
+        {listings.length === 0 ? (
+          <EmptyListingsState
+            title={t('listings.noListingsTitle')}
+            description={t('listings.noListingsDescription')}
+            buttonText={t('listings.createFirstListing')}
+          />
+        ) : (
+          <>
+            <SimpleGrid
+              columns={{ base: 2, sm: 3, md: 3, lg: 4 }}
+              spacing={{ base: 3, sm: 4, md: 5 }}
+            >
+              {listings?.map((listing) => (
+                <ListingCard
+                  key={listing._id}
+                  listing={listing}
+                  onClick={() => {
+                    if (listing._id) router.push(`/listings/${listing._id}`);
+                  }}
+                />
+              ))}
+            </SimpleGrid>
+            <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
+        )}
       </Box>
-      <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
     </Box>
   );
 };

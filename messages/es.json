@@ -95,7 +95,10 @@
     "deleteErrorDescription": "No se pudo eliminar el listado. Por favor, inténtelo de nuevo.",
     "details": "Detalles",
     "contact": "Contactar",
-    "mileageUnit": "mil."
+    "mileageUnit": "mil.",
+    "noListingsTitle": "No se encontraron listados",
+    "noListingsDescription": "Actualmente no hay listados disponibles. ¡Sé el primero en crear uno!",
+    "createFirstListing": "Crear tu primer listado"
   },
   "auth": {
     "signUp": "Registrarse",
@@ -124,7 +127,10 @@
   },
   "myListings": {
     "title": "Mis listados",
-    "newListing": "Nuevo listado"
+    "newListing": "Nuevo listado",
+    "noListingsTitle": "Aún no tienes ningún listado",
+    "noListingsDescription": "Comienza a ganar dinero listando tu vehículo o placa TLC. ¡Solo toma unos minutos!",
+    "createFirstListing": "Crear tu primer listado"
   },
   "contactModal": {
     "title": "Información de contacto",
@@ -136,5 +142,63 @@
     "loginPrompt": "Por favor inicie sesión o cree una cuenta para ver la información de contacto",
     "login": "Iniciar sesión",
     "signUp": "Registrarse"
+  },
+  "listingForm": {
+    "title": "Título",
+    "description": "Descripción",
+    "transaction": "Transacción",
+    "listingType": "Tipo de listado",
+    "brand": "Marca",
+    "model": "Modelo",
+    "year": "Año",
+    "fuelType": "Tipo de combustible",
+    "mileage": "Kilometraje",
+    "color": "Color",
+    "plateNumber": "Número de placa",
+    "baseNumber": "Número de base",
+    "price": "Precio",
+    "county": "Condado",
+    "city": "Ciudad",
+    "state": "Estado",
+    "phoneNumber": "Número de teléfono",
+    "emailAddress": "Correo electrónico",
+    "photos": "Fotos",
+    "transactionRental": "Alquiler",
+    "transactionSale": "Venta",
+    "listingTypeVehicle": "Vehículo",
+    "listingTypePlate": "Placa",
+    "fuelGas": "Gasolina",
+    "fuelHybrid": "Híbrido",
+    "fuelElectric": "Eléctrico",
+    "fuelDiesel": "Diésel",
+    "saveListing": "Guardar listado",
+    "createListing": "Crear listado",
+    "cancel": "Cancelar",
+    "cleaningUp": "Limpiando...",
+    "pricePlaceholder": "0",
+    "phonePlaceholder": "(555) 123-4567",
+    "emailPlaceholder": "ejemplo@correo.com",
+    "errorTitleLength": "El título debe tener al menos 3 caracteres.",
+    "errorDescriptionLength": "La longitud de la descripción debe ser mayor de 25 caracteres o menor de 1000.",
+    "errorPriceInvalid": "El precio debe ser mayor a $ 0.00",
+    "errorEmailInvalid": "Por favor ingrese una dirección de correo electrónico válida.",
+    "errorPhoneInvalid": "Por favor ingrese un número de teléfono válido de 10 dígitos.",
+    "errorImagesRequired": "Por favor cargue al menos una foto."
+  },
+  "imageUploader": {
+    "selectPhotos": "Seleccionar fotos",
+    "selecting": "Seleccionando...",
+    "successTitle": "Archivos seleccionados",
+    "successDescription": "{count} archivo(s) seleccionado(s) para cargar",
+    "errorTooManyFiles": "Demasiados archivos",
+    "errorMaxFiles": "Puede cargar máximo {max} fotos. Ya tiene {current}.",
+    "errorInvalidFileType": "Tipo de archivo inválido",
+    "errorNotImage": "{fileName} no es un archivo de imagen",
+    "errorFilesTooLarge": "Archivos demasiado grandes",
+    "errorMaxFileSize": "El tamaño máximo de archivo es {max}",
+    "errorTotalSizeExceeded": "Límite de tamaño total excedido",
+    "errorMaxTotalSize": "El tamaño total máximo es {max}. Actual: {current}. Intentado: {attempting}",
+    "errorSelectionFailed": "Selección fallida",
+    "errorGeneric": "Error al seleccionar archivos"
   }
 }

@@ -21,6 +21,7 @@ import { createPlateState, createVehicleState } from '@/lib/utils/listing-item-h
 import NumberInputWithCommas from './number-input-with-commas';
 import { ImagePreview } from '../cloudinary/local-image-preview';
 import { useRouter } from 'next/router';
+import { useTranslations } from 'next-intl';
 
 export interface ListingFormProps {
   listing?: Listing;
@@ -29,6 +30,7 @@ export interface ListingFormProps {
 
 const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
   const router = useRouter();
+  const t = useTranslations('listingForm');
   const initialListingState: Listing = {
     title: listing?.title ?? '',
     description: listing?.description ?? '',
@@ -210,36 +212,36 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
     let isValid = true;
 
     if (listingData.title.length < 3) {
-      setTitleError('Title must be at least 3 characters long.');
+      setTitleError(t('errorTitleLength'));
       isValid = false;
     }
 
     if (listingData.description.length < 25 || listingData.description.length > 1000) {
-      setDescriptionError('Description length must be more than 25 characters or less than 1000.');
+      setDescriptionError(t('errorDescriptionLength'));
       isValid = false;
     }
 
     if (!listingData.price || !Number(listingData.price)) {
-      setPriceError('Price should be greater than $ 0.00');
+      setPriceError(t('errorPriceInvalid'));
       isValid = false;
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!listingData.contact?.email || !emailRegex.test(listingData.contact?.email)) {
-      setEmailError('Please enter a valid email address.');
+      setEmailError(t('errorEmailInvalid'));
       isValid = false;
     }
 
     // Phone validation (US phone number format)
     const phoneDigits = listingData.contact?.phone.replace(/\D/g, '');
     if (!listingData.contact?.phone || phoneDigits?.length !== 10) {
-      setPhoneError('Please enter a valid 10-digit phone number.');
+      setPhoneError(t('errorPhoneInvalid'));
       isValid = false;
     }
 
-    if (listingData.images.length === 0 && listingData.transaction_type !== 'Rental') {
-      setImagesError('Please upload at least one photo.');
+    if (listingData.images.length === 0 && listingData.listing_category === 'Vehicle') {
+      setImagesError(t('errorImagesRequired'));
       isValid = false;
     }
 
@@ -253,7 +255,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
   return (
     <Stack>
       <FormControl isRequired isInvalid={!!titleError}>
-        <FormLabel>Title</FormLabel>
+        <FormLabel>{t('title')}</FormLabel>
         <Input
           variant="outline"
           value={listingData?.title}
@@ -265,7 +267,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         <FormErrorMessage>{titleError}</FormErrorMessage>
       </FormControl>
       <FormControl isRequired isInvalid={!!descriptionError}>
-        <FormLabel>Description</FormLabel>
+        <FormLabel>{t('description')}</FormLabel>
         <Textarea
           variant="outline"
           value={listingData?.description}
@@ -279,7 +281,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         <FormErrorMessage>{descriptionError}</FormErrorMessage>
       </FormControl>
       <FormControl isRequired>
-        <FormLabel>Transaction</FormLabel>
+        <FormLabel>{t('transaction')}</FormLabel>
         <Select
           variant="outline"
           value={listingData?.transaction_type}
@@ -287,20 +289,20 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
           onChange={handleListingChange}
           disabled
         >
-          <option value={'Rental'}>Rental</option>
-          <option value={'Sale'}>Sale</option>
+          <option value={'Rental'}>{t('transactionRental')}</option>
+          <option value={'Sale'}>{t('transactionSale')}</option>
         </Select>
       </FormControl>
       <FormControl>
-        <FormLabel>Listing Type</FormLabel>
+        <FormLabel>{t('listingType')}</FormLabel>
         <Select
           variant="outline"
           value={listingData?.listing_category}
           name="listing_category"
           onChange={handleListingChange}
         >
-          <option value={'Vehicle'}>Vehicle</option>
-          <option value={'Plate'}>Plate</option>
+          <option value={'Vehicle'}>{t('listingTypeVehicle')}</option>
+          <option value={'Plate'}>{t('listingTypePlate')}</option>
         </Select>
       </FormControl>
       <Stack direction={{ base: 'column', md: 'row' }}>
@@ -308,7 +310,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         {listingData?.listing_category === 'Vehicle' && (
           <>
             <FormControl>
-              <FormLabel>Make</FormLabel>
+              <FormLabel>{t('brand')}</FormLabel>
               <Select
                 variant="outline"
                 name="make"
@@ -323,14 +325,14 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel>Model</FormLabel>
+              <FormLabel>{t('model')}</FormLabel>
               <Select
                 variant="outline"
                 name="model"
                 value={(listingData?.item as Vehicle).model}
                 onChange={handleItemChange}
               >
-                {CarModels[listingData.item.make as keyof typeof CarModels]?.map(
+                {CarModels[(listingData.item as Vehicle).make as keyof typeof CarModels]?.map(
                   (model: string) => (
                     <option value={model} key={model}>
                       {model}
@@ -340,7 +342,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel>Year</FormLabel>
+              <FormLabel>{t('year')}</FormLabel>
               <Input
                 variant="outline"
                 type="number"
@@ -350,21 +352,21 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Fuel Type</FormLabel>
+              <FormLabel>{t('fuelType')}</FormLabel>
               <Select
                 variant="outline"
                 name="fuel"
                 value={(listingData?.item as Vehicle).fuel}
                 onChange={handleItemChange}
               >
-                <option value="Gas">Gas</option>
-                <option value="Hybrid">Hybrid</option>
-                <option value="Electric">Electric</option>
-                <option value="Diesel">Diesel</option>
+                <option value="Gas">{t('fuelGas')}</option>
+                <option value="Hybrid">{t('fuelHybrid')}</option>
+                <option value="Electric">{t('fuelElectric')}</option>
+                <option value="Diesel">{t('fuelDiesel')}</option>
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel>Mileage</FormLabel>
+              <FormLabel>{t('mileage')}</FormLabel>
               <NumberInputWithCommas
                 variant="outline"
                 type="number"
@@ -374,7 +376,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Color</FormLabel>
+              <FormLabel>{t('color')}</FormLabel>
               <Input
                 variant="outline"
                 name="color"
@@ -388,7 +390,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         {listingData?.listing_category === 'Plate' && (
           <>
             <FormControl>
-              <FormLabel>Plate Number</FormLabel>
+              <FormLabel>{t('plateNumber')}</FormLabel>
               <Input
                 variant="outline"
                 name="plate_number"
@@ -397,7 +399,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Base Number</FormLabel>
+              <FormLabel>{t('baseNumber')}</FormLabel>
               <Input
                 variant="outline"
                 name="base_number"
@@ -409,7 +411,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         )}
       </Stack>
       <FormControl isRequired isInvalid={!!priceError}>
-        <FormLabel>Price</FormLabel>
+        <FormLabel>{t('price')}</FormLabel>
         <InputGroup>
           <InputLeftElement>$</InputLeftElement>
           <Input
@@ -419,14 +421,14 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
             name="price"
             onChange={handleListingChange}
             min={1}
-            placeholder="0"
+            placeholder={t('pricePlaceholder')}
           />
         </InputGroup>
         <FormErrorMessage>{priceError}</FormErrorMessage>
       </FormControl>
       <Stack direction={{ base: 'column', md: 'row' }}>
         <FormControl>
-          <FormLabel>County</FormLabel>
+          <FormLabel>{t('county')}</FormLabel>
           <Input
             variant="outline"
             value={listingData?.location.county}
@@ -435,7 +437,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>City</FormLabel>
+          <FormLabel>{t('city')}</FormLabel>
           <Input
             variant="outline"
             value={listingData?.location.city}
@@ -444,7 +446,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>State</FormLabel>
+          <FormLabel>{t('state')}</FormLabel>
           <Select
             variant="outline"
             value={listingData?.location.state}
@@ -461,38 +463,38 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
       </Stack>
       <Stack direction={{ base: 'column', md: 'row' }}>
         <FormControl isRequired isInvalid={!!phoneError}>
-          <FormLabel>Phone Number</FormLabel>
+          <FormLabel>{t('phoneNumber')}</FormLabel>
           <Input
             variant="outline"
             value={listingData?.contact?.phone}
             name="phone"
             type="tel"
             onChange={handleContactChange}
-            placeholder="(555) 123-4567"
+            placeholder={t('phonePlaceholder')}
           />
           <FormErrorMessage>{phoneError}</FormErrorMessage>
         </FormControl>
         <FormControl isRequired isInvalid={!!emailError}>
-          <FormLabel>Email Address</FormLabel>
+          <FormLabel>{t('emailAddress')}</FormLabel>
           <Input
             variant="outline"
             value={listingData?.contact?.email}
             name="email"
             type="email"
             onChange={handleContactChange}
-            placeholder="example@email.com"
+            placeholder={t('emailPlaceholder')}
           />
           <FormErrorMessage>{emailError}</FormErrorMessage>
         </FormControl>
       </Stack>
       <VStack>
         <FormControl
-          isRequired={listingData.transaction_type !== 'Rental'}
+          isRequired={listingData.listing_category === 'Vehicle'}
           isInvalid={!!imagesError}
           width="full"
         >
-          <FormLabel>Photos</FormLabel>
-          <ImageUploader handleFileSelect={handleFileSelect} />
+          <FormLabel>{t('photos')}</FormLabel>
+          <ImageUploader handleFileSelect={handleFileSelect} currentImages={listingData.images} />
           {listingData.images.length > 0 && (
             <Stack
               direction="row"
@@ -519,10 +521,10 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
       </VStack>
       <Stack direction={{ base: 'column', md: 'row' }} mt={4}>
         <Button onClick={submitListing}>
-          {listingData._id ? 'Save Listing' : 'Create Listing'}
+          {listingData._id ? t('saveListing') : t('createListing')}
         </Button>
-        <Button onClick={cancelListing} isLoading={isCanceling} loadingText="Cleaning up...">
-          Cancel
+        <Button onClick={cancelListing} isLoading={isCanceling} loadingText={t('cleaningUp')}>
+          {t('cancel')}
         </Button>
       </Stack>
     </Stack>

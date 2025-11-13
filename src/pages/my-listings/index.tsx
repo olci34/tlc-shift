@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { ListingCard } from '@/components/listing/listing-card';
+import { EmptyListingsState } from '@/components/listing/empty-listings-state';
 import Paginator from '@/components/paginator/paginator';
 import { useTranslations } from 'next-intl';
 import { GetStaticProps } from 'next';
@@ -57,19 +58,35 @@ const UserListingsPage: FC = () => {
         <Heading>{t('myListings.title')}</Heading>
         <Button
           leftIcon={<AddIcon />}
-          backgroundColor={useColorModeValue('green.600', 'green.300')}
+          colorScheme="green"
           onClick={() => router.push('/listings/create')}
         >
           {t('myListings.newListing')}
         </Button>
       </HStack>
       <Box paddingY={2}>
-        <SimpleGrid columns={{ base: 2, sm: 3, md: 3, lg: 4 }} spacing={{ base: 3, sm: 4, md: 5 }}>
-          {isLoading
-            ? Array.from({ length: 3 }).map((_, idx) => (
-                <Skeleton key={`skt-${idx}`} height={150} borderRadius="md" />
-              ))
-            : listings?.map((listing) => (
+        {isLoading ? (
+          <SimpleGrid
+            columns={{ base: 2, sm: 3, md: 3, lg: 4 }}
+            spacing={{ base: 3, sm: 4, md: 5 }}
+          >
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <Skeleton key={`skt-${idx}`} height={150} borderRadius="md" />
+            ))}
+          </SimpleGrid>
+        ) : listings.length === 0 ? (
+          <EmptyListingsState
+            title={t('myListings.noListingsTitle')}
+            description={t('myListings.noListingsDescription')}
+            buttonText={t('myListings.createFirstListing')}
+          />
+        ) : (
+          <>
+            <SimpleGrid
+              columns={{ base: 2, sm: 3, md: 3, lg: 4 }}
+              spacing={{ base: 3, sm: 4, md: 5 }}
+            >
+              {listings?.map((listing) => (
                 <ListingCard
                   key={listing._id}
                   listing={listing}
@@ -78,9 +95,11 @@ const UserListingsPage: FC = () => {
                   }}
                 />
               ))}
-        </SimpleGrid>
+            </SimpleGrid>
+            <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
+        )}
       </Box>
-      <Paginator currentPage={page} totalPages={totalPages} onPageChange={setPage} />
     </Box>
   );
 };

@@ -69,7 +69,7 @@
   },
   "listings": {
     "newListing": "Add Listing",
-    "makeFilter": "Make",
+    "makeFilter": "Brand",
     "modelFilter": "Model",
     "minYearFilter": "Min",
     "maxYearFilter": "Max",
@@ -95,7 +95,10 @@
     "deleteErrorDescription": "Failed to delete listing. Please try again.",
     "details": "Details",
     "contact": "Contact",
-    "mileageUnit": "mil."
+    "mileageUnit": "mil.",
+    "noListingsTitle": "No Listings Found",
+    "noListingsDescription": "There are currently no listings available. Be the first to create one!",
+    "createFirstListing": "Create Your First Listing"
   },
   "auth": {
     "signUp": "Sign Up",
@@ -124,7 +127,10 @@
   },
   "myListings": {
     "title": "My Listings",
-    "newListing": "Add Listing"
+    "newListing": "Add Listing",
+    "noListingsTitle": "You Don't Have Any Listings Yet",
+    "noListingsDescription": "Start earning by listing your vehicle or TLC plate. It only takes a few minutes!",
+    "createFirstListing": "Create Your First Listing"
   },
   "contactModal": {
     "title": "Contact Information",
@@ -136,5 +142,63 @@
     "loginPrompt": "Please sign in or create an account to view contact information",
     "login": "Login",
     "signUp": "Sign Up"
+  },
+  "listingForm": {
+    "title": "Title",
+    "description": "Description",
+    "transaction": "Transaction",
+    "listingType": "Listing Type",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "fuelType": "Fuel Type",
+    "mileage": "Mileage",
+    "color": "Color",
+    "plateNumber": "Plate Number",
+    "baseNumber": "Base Number",
+    "price": "Price",
+    "county": "County",
+    "city": "City",
+    "state": "State",
+    "phoneNumber": "Phone Number",
+    "emailAddress": "Email Address",
+    "photos": "Photos",
+    "transactionRental": "Rental",
+    "transactionSale": "Sale",
+    "listingTypeVehicle": "Vehicle",
+    "listingTypePlate": "Plate",
+    "fuelGas": "Gas",
+    "fuelHybrid": "Hybrid",
+    "fuelElectric": "Electric",
+    "fuelDiesel": "Diesel",
+    "saveListing": "Save Listing",
+    "createListing": "Create Listing",
+    "cancel": "Cancel",
+    "cleaningUp": "Cleaning up...",
+    "pricePlaceholder": "0",
+    "phonePlaceholder": "(555) 123-4567",
+    "emailPlaceholder": "example@email.com",
+    "errorTitleLength": "Title must be at least 3 characters long.",
+    "errorDescriptionLength": "Description length must be more than 25 characters or less than 1000.",
+    "errorPriceInvalid": "Price should be greater than $ 0.00",
+    "errorEmailInvalid": "Please enter a valid email address.",
+    "errorPhoneInvalid": "Please enter a valid 10-digit phone number.",
+    "errorImagesRequired": "Please upload at least one photo."
+  },
+  "imageUploader": {
+    "selectPhotos": "Select Photos",
+    "selecting": "Selecting...",
+    "successTitle": "Files selected",
+    "successDescription": "{count} file(s) selected for upload",
+    "errorTooManyFiles": "Too many files",
+    "errorMaxFiles": "You can upload maximum {max} photos. You already have {current}.",
+    "errorInvalidFileType": "Invalid file type",
+    "errorNotImage": "{fileName} is not an image file",
+    "errorFilesTooLarge": "Files too large",
+    "errorMaxFileSize": "Maximum file size is {max}",
+    "errorTotalSizeExceeded": "Total size limit exceeded",
+    "errorMaxTotalSize": "Maximum total size is {max}. Current: {current}. Attempted: {attempting}",
+    "errorSelectionFailed": "Selection failed",
+    "errorGeneric": "Failed to select files"
   }
 }
