@@ -122,8 +122,20 @@
     "loadingMessage": "This may take up to 50 seconds."
   },
   "account": {
+    "title": "My Account",
+    "subtitle": "Manage your account settings and preferences",
     "email": "Email",
-    "changePassword": "Change Password"
+    "fullName": "Full Name",
+    "password": "Password",
+    "changePassword": "Change Password",
+    "memberSince": "Member since 2024",
+    "subscriptionTitle": "Subscription & Billing",
+    "currentPlan": "Current Plan",
+    "planDescription": "You are currently on the free plan",
+    "freePlan": "FREE",
+    "monthlyCharge": "Monthly Charge",
+    "activeListings": "Active Listings",
+    "freeFeatureNote": "You can create and manage listings at no cost. In the future, premium features may be available."
   },
   "myListings": {
     "title": "My Listings",

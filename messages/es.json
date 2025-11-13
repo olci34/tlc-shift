@@ -122,8 +122,20 @@
     "loadingMessage": "Esto puede tardar hasta 50 segundos."
   },
   "account": {
+    "title": "Mi Cuenta",
+    "subtitle": "Gestiona la configuración y preferencias de tu cuenta",
     "email": "Correo electrónico",
-    "changePassword": "Cambiar contraseña"
+    "fullName": "Nombre Completo",
+    "password": "Contraseña",
+    "changePassword": "Cambiar Contraseña",
+    "memberSince": "Miembro desde 2024",
+    "subscriptionTitle": "Suscripción y Facturación",
+    "currentPlan": "Plan Actual",
+    "planDescription": "Actualmente estás en el plan gratuito",
+    "freePlan": "GRATIS",
+    "monthlyCharge": "Cargo Mensual",
+    "activeListings": "Listados Activos",
+    "freeFeatureNote": "Puedes crear y gestionar listados sin costo. En el futuro, pueden estar disponibles funciones premium."
   },
   "myListings": {
     "title": "Mis listados",
