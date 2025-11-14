@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { createListing } from '@/api/createListing';
 import type { Listing } from '@/lib/interfaces/Listing';
+import * as gtag from '@/lib/analytics/gtag';
 
 const CreateListingPage = () => {
   const router = useRouter();
@@ -12,6 +13,12 @@ const CreateListingPage = () => {
     try {
       const result = await createListing(listing);
       if (result) {
+        // Track listing creation in Google Analytics
+        gtag.trackEvent.createListing(
+          listing.listing_category,
+          listing.price
+        );
+
         // Cleanup object URLs for new images
         listing.images.forEach((img) => {
           if (!img.cld_public_id && img.src) {

@@ -33,6 +33,7 @@ import ContactModal from '@/components/contact-modal';
 import { useTranslations } from 'next-intl';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { getMessages } from '@/lib/utils/i18n';
+import * as gtag from '@/lib/analytics/gtag';
 
 const ListingViewPage: FC = () => {
   const router = useRouter();
@@ -67,6 +68,11 @@ const ListingViewPage: FC = () => {
     const fetchListing = async () => {
       const resp = await getListing(id as string);
       setListing(resp);
+
+      // Track listing view in Google Analytics
+      if (resp?._id) {
+        gtag.trackEvent.viewListing(resp._id);
+      }
     };
 
     fetchListing();
@@ -74,6 +80,14 @@ const ListingViewPage: FC = () => {
 
   const handleDeleteClick = () => {
     onDeleteDialogOpen();
+  };
+
+  const handleContactClick = () => {
+    // Track contact seller event in Google Analytics
+    if (listing?._id) {
+      gtag.trackEvent.contactSeller(listing._id);
+    }
+    onOpen();
   };
 
   const handleDeleteConfirm = async () => {
@@ -84,6 +98,9 @@ const ListingViewPage: FC = () => {
 
     try {
       await deleteListing(listing._id);
+
+      // Track listing deletion in Google Analytics
+      gtag.trackEvent.deleteListing(listing._id);
 
       toast({
         title: t('listings.deleteSuccess'),
@@ -300,7 +317,7 @@ const ListingViewPage: FC = () => {
               colorScheme="blue"
               variant="outline"
               size="sm"
-              onClick={onOpen}
+              onClick={handleContactClick}
             >
               {t('listings.contact')}
             </Button>

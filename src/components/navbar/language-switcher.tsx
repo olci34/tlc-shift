@@ -1,6 +1,7 @@
 import { Menu, MenuButton, MenuList, MenuItem, IconButton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { FaGlobe } from 'react-icons/fa';
+import * as gtag from '@/lib/analytics/gtag';
 
 const LanguageSwitcher = () => {
   const router = useRouter();
@@ -9,6 +10,9 @@ const LanguageSwitcher = () => {
   const changeLanguage = (newLocale: string) => {
     const currentLocale = router.locale || 'en';
     let path = router.asPath;
+
+    // Track language change in Google Analytics
+    gtag.trackEvent.changeLanguage(newLocale);
 
     // Remove current locale prefix if it exists in the path
     if (currentLocale !== 'en' && path.startsWith(`/${currentLocale}`)) {

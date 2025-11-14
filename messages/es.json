@@ -65,7 +65,10 @@
     "feedbackSuccess": "¡Gracias por sus comentarios!",
     "feedbackSuccessDescription": "Apreciamos su aporte y consideraremos su solicitud.",
     "feedbackWarning": "Por favor ingrese una solicitud de función",
-    "feedbackWarningDescription": "Díganos qué le gustaría ver en TLC Shift."
+    "feedbackWarningDescription": "Díganos qué le gustaría ver en TLC Shift.",
+    "feedbackSubmitting": "Enviando...",
+    "feedbackError": "No se puede enviar comentarios",
+    "feedbackErrorDescription": "Algo salió mal. Por favor, inténtelo de nuevo más tarde."
   },
   "listings": {
     "newListing": "Nuevo listado",
@@ -146,7 +149,6 @@
   },
   "contactModal": {
     "title": "Información de contacto",
-    "description": "Contacte al vendedor usando la siguiente información:",
     "email": "Correo electrónico",
     "noEmail": "No se proporcionó correo electrónico",
     "phone": "Teléfono",

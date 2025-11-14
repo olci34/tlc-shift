@@ -27,6 +27,7 @@ import { signup } from '@/api/signup';
 import { useTranslations } from 'next-intl';
 import { GetStaticProps } from 'next';
 import { getMessages } from '@/lib/utils/i18n';
+import * as gtag from '@/lib/analytics/gtag';
 
 export interface SignupData {
   email: string;
@@ -116,6 +117,7 @@ const SignupLogin: React.FC = () => {
 
       if (res?.ok && res.url) {
         setLoginErrors({ ...loginErrors, errorMessage: null });
+        gtag.trackEvent.signup();
         router.push(res.url);
       } else if (res?.error) {
         setLoginErrors({ ...loginErrors, errorMessage: res.error });
@@ -138,6 +140,7 @@ const SignupLogin: React.FC = () => {
 
     if (res?.ok && res.url) {
       setLoginErrors({ ...loginErrors, errorMessage: null });
+      gtag.trackEvent.login();
       router.push(res.url);
     } else if (res?.error) {
       setLoginErrors({ ...loginErrors, errorMessage: res.error });

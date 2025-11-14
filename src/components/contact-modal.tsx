@@ -31,7 +31,8 @@ const ContactModal: FC<ContactModalProps> = ({ isOpen, onClose, contact }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const descriptionColor = useColorModeValue('gray.600', 'gray.400');
-  const contactValueColor = useColorModeValue('gray.700', 'gray.300');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const contactCardBg = useColorModeValue('gray.50', 'gray.700');
 
   const handleLoginClick = (): void => {
     onClose();
@@ -44,34 +45,86 @@ const ContactModal: FC<ContactModalProps> = ({ isOpen, onClose, contact }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size={{ base: 'sm', md: 'md' }}>
+      <ModalOverlay backdropFilter="blur(4px)" />
       <ModalContent>
         <ModalHeader>{t('contactModal.title')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           {session ? (
-            <VStack spacing={4} align="stretch">
-              <Text fontSize="sm" color={descriptionColor}>
-                {t('contactModal.description')}
-              </Text>
-              <Box>
+            <VStack spacing={5} align="stretch">
+              {/* Email Section */}
+              <Box
+                p={4}
+                borderRadius="md"
+                borderWidth="1px"
+                borderColor={borderColor}
+                bg={contactCardBg}
+                _hover={{ shadow: 'md', borderColor: 'blue.400' }}
+                transition="all 0.2s"
+              >
                 <HStack spacing={3} mb={2}>
-                  <Icon as={FaEnvelope} color="blue.500" />
-                  <Text fontWeight="medium">{t('contactModal.email')}</Text>
+                  <Icon as={FaEnvelope} color="blue.500" boxSize={5} />
+                  <Text fontWeight="semibold" fontSize="sm">
+                    {t('contactModal.email')}
+                  </Text>
                 </HStack>
-                <Text ml={7} color={contactValueColor}>
-                  {contact?.email || t('contactModal.noEmail')}
-                </Text>
+                {contact?.email ? (
+                  <Button
+                    as="a"
+                    href={`mailto:${contact.email}`}
+                    variant="link"
+                    colorScheme="blue"
+                    fontSize="md"
+                    fontWeight="medium"
+                    ml={8}
+                    textDecoration="underline"
+                    _hover={{ color: 'blue.600' }}
+                  >
+                    {contact.email}
+                  </Button>
+                ) : (
+                  <Text ml={8} color={descriptionColor} fontSize="sm" fontStyle="italic">
+                    {t('contactModal.noEmail')}
+                  </Text>
+                )}
               </Box>
-              <Box>
+
+              {/* Phone Section */}
+              <Box
+                p={4}
+                borderRadius="md"
+                borderWidth="1px"
+                borderColor={borderColor}
+                bg={contactCardBg}
+                _hover={{ shadow: 'md', borderColor: 'green.400' }}
+                transition="all 0.2s"
+              >
                 <HStack spacing={3} mb={2}>
-                  <Icon as={FaPhone} color="green.500" />
-                  <Text fontWeight="medium">{t('contactModal.phone')}</Text>
+                  <Icon as={FaPhone} color="green.500" boxSize={5} />
+                  <Text fontWeight="semibold" fontSize="sm">
+                    {t('contactModal.phone')}
+                  </Text>
                 </HStack>
-                <Text ml={7} color={contactValueColor}>
-                  {contact?.phone || t('contactModal.noPhone')}
-                </Text>
+                {contact?.phone ? (
+                  <Button
+                    as="a"
+                    href={`tel:${contact.phone}`}
+                    variant="link"
+                    colorScheme="green"
+                    fontSize="md"
+                    fontWeight="medium"
+                    ml={8}
+                    textDecoration="underline"
+                    _hover={{ color: 'green.600' }}
+                  >
+                    {contact.phone}
+                  </Button>
+                ) : (
+                  <Text ml={8} color={descriptionColor} fontSize="sm" fontStyle="italic">
+                    {t('contactModal.noPhone')}
+                  </Text>
+                )}
               </Box>
             </VStack>
           ) : (

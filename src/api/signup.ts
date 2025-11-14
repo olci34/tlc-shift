@@ -1,13 +1,18 @@
 import { SignupData } from '@/pages/signup-login';
 import apiClient from './interceptors/apiClient';
 import { AxiosError } from 'axios';
+import { getVisitorIdSafe } from '@/lib/utils/visitor-id';
 
 export const signup = async (data: SignupData) => {
+  // Get existing visitor_id that was created on app load
+  const visitorId = getVisitorIdSafe();
+
   const body = {
     email: data.email,
     password: data.password,
     first_name: data.firstName,
-    last_name: data.lastName
+    last_name: data.lastName,
+    visitor_id: visitorId
   };
 
   try {

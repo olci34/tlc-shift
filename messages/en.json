@@ -65,7 +65,10 @@
     "feedbackSuccess": "Thank you for your feedback!",
     "feedbackSuccessDescription": "We appreciate your input and will consider your request.",
     "feedbackWarning": "Please enter a feature request",
-    "feedbackWarningDescription": "Tell us what you'd like to see in TLC Shift."
+    "feedbackWarningDescription": "Tell us what you'd like to see in TLC Shift.",
+    "feedbackSubmitting": "Submitting...",
+    "feedbackError": "Unable to submit feedback",
+    "feedbackErrorDescription": "Something went wrong. Please try again later."
   },
   "listings": {
     "newListing": "Add Listing",
@@ -146,7 +149,6 @@
   },
   "contactModal": {
     "title": "Contact Information",
-    "description": "Contact the seller using the information below:",
     "email": "Email",
     "noEmail": "No email provided",
     "phone": "Phone",

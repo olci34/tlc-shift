@@ -33,6 +33,9 @@ import { useTranslations } from 'next-intl';
 import { GetStaticProps } from 'next';
 import { getMessages } from '@/lib/utils/i18n';
 import { joinWaitlist } from '@/api/joinWaitlist';
+import { submitFeedback } from '@/api/submitFeedback';
+import { getVisitorIdSafe } from '@/lib/utils/visitor-id';
+import * as gtag from '@/lib/analytics/gtag';
 
 export default function Home() {
   const router = useRouter();
@@ -43,6 +46,7 @@ export default function Home() {
   const [emailError, setEmailError] = useState(false);
   const [featureRequest, setFeatureRequest] = useState('');
   const [joiningWaitlist, setJoiningWaitlist] = useState(false);
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const newsletterEmail = useRef<HTMLInputElement>(null);
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,6 +86,8 @@ export default function Home() {
     try {
       await joinWaitlist(email);
 
+      gtag.trackEvent.joinWaitlist();
+
       toast({
         title: t('home.waitlistSuccess'),
         description: t('home.waitlistSuccessDescription'),
@@ -108,8 +114,28 @@ export default function Home() {
     }
   };
 
-  const handleFeatureRequest = () => {
-    if (featureRequest.trim().length > 0) {
+  const handleFeatureRequest = async () => {
+    if (featureRequest.trim().length === 0) {
+      toast({
+        title: t('home.feedbackWarning'),
+        description: t('home.feedbackWarningDescription'),
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'top'
+      });
+      return;
+    }
+
+    setSubmittingFeedback(true);
+
+    try {
+      // Get existing visitor_id that was created on app load
+      const visitorId = getVisitorIdSafe();
+      await submitFeedback(featureRequest, visitorId);
+
+      gtag.trackEvent.submitFeedback();
+
       toast({
         title: t('home.feedbackSuccess'),
         description: t('home.feedbackSuccessDescription'),
@@ -119,15 +145,17 @@ export default function Home() {
         position: 'top'
       });
       setFeatureRequest('');
-    } else {
+    } catch (error: any) {
       toast({
-        title: t('home.feedbackWarning'),
-        description: t('home.feedbackWarningDescription'),
-        status: 'warning',
-        duration: 3000,
+        title: t('home.feedbackError'),
+        description: error?.response?.data?.detail || t('home.feedbackErrorDescription'),
+        status: 'error',
+        duration: 5000,
         isClosable: true,
         position: 'top'
       });
+    } finally {
+      setSubmittingFeedback(false);
     }
   };
 
@@ -432,6 +460,8 @@ export default function Home() {
             onClick={handleFeatureRequest}
             width={{ base: 'full', sm: 'auto' }}
             alignSelf="center"
+            isLoading={submittingFeedback}
+            loadingText={t('home.feedbackSubmitting')}
           >
             {t('home.feedbackSubmit')}
           </Button>
