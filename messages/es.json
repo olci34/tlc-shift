@@ -104,6 +104,11 @@
     "createFirstListing": "Crear tu primer listado"
   },
   "auth": {
+    "welcome": "Bienvenido a TLC Shift",
+    "welcomeSubtitle": "Inicia sesión para administrar tus listados y encontrar oportunidades de alquiler",
+    "continueWithGoogle": "Continuar con Google",
+    "or": "O",
+    "signingIn": "Iniciando sesión...",
     "signUp": "Registrarse",
     "login": "Iniciar sesión",
     "emailAddress": "Correo electrónico",

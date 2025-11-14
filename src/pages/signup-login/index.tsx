@@ -16,9 +16,17 @@ import {
   InputRightElement,
   InputGroup,
   FormErrorMessage,
-  FormHelperText
+  FormHelperText,
+  Divider,
+  HStack,
+  useColorModeValue,
+  Heading,
+  Container,
+  Card,
+  CardBody
 } from '@chakra-ui/react';
 import { ViewOffIcon, ViewIcon } from '@chakra-ui/icons';
+import { FaGoogle } from 'react-icons/fa';
 import { isValidEmail } from '@/lib/utils/email-validator';
 import { isValidPassword } from '@/lib/utils/password-validator';
 import { signIn } from 'next-auth/react';
@@ -89,8 +97,28 @@ const SignupLogin: React.FC = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Color mode values
+  const bgGradient = useColorModeValue(
+    'linear(to-br, green.50, teal.50, blue.50)',
+    'linear(to-br, gray.900, gray.800, gray.900)'
+  );
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      await signIn('google', { callbackUrl: '/' });
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   const handleSignupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -186,15 +214,78 @@ const SignupLogin: React.FC = () => {
   };
 
   return (
-    <Box maxW="md" mx="auto" mt={8} p={6}>
-      <Tabs isFitted variant="enclosed" defaultIndex={1}>
-        <TabList mb="1em">
-          <Tab>{t('auth.signUp')}</Tab>
-          <Tab>{t('auth.login')}</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <VStack spacing={4}>
+    <Box minH="100vh" bgGradient={bgGradient} py={{ base: 8, md: 12 }}>
+      <Container maxW="md">
+        <Card
+          bg={cardBg}
+          shadow="2xl"
+          borderRadius="2xl"
+          borderWidth="1px"
+          borderColor={borderColor}
+          overflow="hidden"
+        >
+          <CardBody p={{ base: 6, md: 8 }}>
+            <VStack spacing={6} mb={6}>
+              <Heading size="lg" textAlign="center">
+                {t('auth.welcome')}
+              </Heading>
+              <Text fontSize="sm" color="gray.600" textAlign="center">
+                {t('auth.welcomeSubtitle')}
+              </Text>
+
+              {/* Google Sign-In Button */}
+              <Button
+                width="full"
+                size="lg"
+                leftIcon={<FaGoogle />}
+                onClick={handleGoogleSignIn}
+                isLoading={isGoogleLoading}
+                loadingText={t('auth.signingIn')}
+                colorScheme="red"
+                variant="outline"
+                borderWidth="2px"
+                _hover={{
+                  bg: useColorModeValue('red.50', 'red.900'),
+                  transform: 'translateY(-2px)',
+                  shadow: 'lg'
+                }}
+                transition="all 0.2s"
+              >
+                {t('auth.continueWithGoogle')}
+              </Button>
+
+              {/* Divider with OR */}
+              <HStack width="full">
+                <Divider />
+                <Text px={2} color="gray.500" fontSize="sm" fontWeight="medium">
+                  {t('auth.or')}
+                </Text>
+                <Divider />
+              </HStack>
+            </VStack>
+
+            <Tabs isFitted variant="enclosed" colorScheme="green">
+              <TabList mb="1em">
+                <Tab
+                  _selected={{
+                    bg: useColorModeValue('green.500', 'green.300'),
+                    color: 'white'
+                  }}
+                >
+                  {t('auth.signUp')}
+                </Tab>
+                <Tab
+                  _selected={{
+                    bg: useColorModeValue('green.500', 'green.300'),
+                    color: 'white'
+                  }}
+                >
+                  {t('auth.login')}
+                </Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel px={0}>
+                  <VStack spacing={4}>
               <FormControl id="signup-email" isRequired isInvalid={!!signupErrors.email}>
                 <FormLabel>{t('auth.emailAddress')}</FormLabel>
                 <Input
@@ -279,16 +370,22 @@ const SignupLogin: React.FC = () => {
                 )}
               </FormControl>
               <Button
-                colorScheme="blue"
+                colorScheme="green"
                 width="full"
+                size="lg"
                 onClick={handleSignupSubmit}
                 disabled={!isFormValid(signupData, signupErrors)}
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  shadow: 'lg'
+                }}
+                transition="all 0.2s"
               >
                 {t('auth.signUp')}
               </Button>
             </VStack>
           </TabPanel>
-          <TabPanel>
+          <TabPanel px={0}>
             <VStack spacing={4}>
               <FormControl id="login-email" isRequired isInvalid={!!loginErrors.email}>
                 <FormLabel>{t('auth.emailAddress')}</FormLabel>
@@ -326,16 +423,31 @@ const SignupLogin: React.FC = () => {
                   <FormErrorMessage>{loginErrors.password}</FormErrorMessage>
                 )}
               </FormControl>
-              <Button colorScheme="blue" width="full" onClick={handleLoginSubmit}>
+              <Button
+                colorScheme="green"
+                width="full"
+                size="lg"
+                onClick={handleLoginSubmit}
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  shadow: 'lg'
+                }}
+                transition="all 0.2s"
+              >
                 {t('auth.login')}
               </Button>
               {loginErrors.errorMessage && (
-                <Text colorScheme="red">{loginErrors.errorMessage}</Text>
+                <Text color="red.500" fontSize="sm" fontWeight="medium">
+                  {loginErrors.errorMessage}
+                </Text>
               )}
             </VStack>
           </TabPanel>
         </TabPanels>
       </Tabs>
+          </CardBody>
+        </Card>
+      </Container>
     </Box>
   );
 };

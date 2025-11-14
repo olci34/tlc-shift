@@ -1,4 +1,5 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import NextAuth, { AuthOptions } from 'next-auth';
 import { LoginData } from '@/pages/signup-login';
 import { login } from '@/api/login';
@@ -16,6 +17,17 @@ export interface AuthUser {
 export const authOptions = {
   ...authConfig,
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code'
+        }
+      }
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {},

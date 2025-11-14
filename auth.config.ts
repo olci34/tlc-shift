@@ -8,6 +8,25 @@ export const authConfig = {
     // will be encrypted, and it is stored in a cookie.
     async jwt({ token, user, trigger, account }) {
       //TODO: Use trigger 'update', when user changes their data that is stored in jwt to update session data.
+
+      // Handle Google OAuth sign in
+      if (account?.provider === 'google' && user) {
+        // Extract name from Google profile
+        const nameParts = user.name?.split(' ') || [];
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          firstName,
+          lastName,
+          provider: 'google'
+        };
+      }
+
+      // Handle credentials sign in
       return { ...token, ...user };
     },
 
@@ -32,6 +51,6 @@ export const authConfig = {
   },
   providers: [],
   pages: {
-    signIn: '/login'
+    signIn: '/signup-login'
   }
 } satisfies AuthOptions;
