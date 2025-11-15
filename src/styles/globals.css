@@ -24,3 +24,18 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* Ensure Leaflet map doesn't overlay other UI */
+.leaflet-container,
+.leaflet-pane,
+.leaflet-pane * {
+  z-index: 0 !important;
+}
+
+/* Keep popups and controls above the tiles but still below app overlays if needed */
+.leaflet-control,
+.leaflet-popup,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1 !important;
+}

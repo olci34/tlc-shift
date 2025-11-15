@@ -1,29 +1,33 @@
-import axios from 'axios';
-import moment, { Moment } from 'moment';
+import apiClient from './interceptors/apiClient';
+import moment from 'moment';
 
-export type TripDensityResponse = {
+export interface TripDensityResponse {
   location_id: number;
   density: number;
-};
+}
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const getTripDensity = async (startDatetime: Moment, startTime: number, endTime: number) => {
+export const getTripDensity = async (
+  startDatetime: moment.Moment,
+  endDatetime: moment.Moment,
+  startTime: number,
+  endTime: number
+) => {
   const dateFormat = 'YYYY-MM-DDTHH:mm:ss.000';
-  const tripsURL = new URL(`${API_URL}/trips/density`);
+  const params = new URLSearchParams();
+
   startDatetime.set('hour', startTime);
-  const endDatetime = moment(startDatetime).set('hour', endTime);
-  tripsURL.searchParams.set('startDate', startDatetime.format(dateFormat));
-  tripsURL.searchParams.set('endDate', endDatetime.format(dateFormat));
-  tripsURL.searchParams.set('startTime', startTime.toString());
-  tripsURL.searchParams.set('endTime', endTime.toString());
+  params.set('startDate', startDatetime.format(dateFormat));
+  params.set('endDate', endDatetime.format(dateFormat));
+  params.set('startTime', startTime.toString());
+  params.set('endTime', endTime.toString());
 
   try {
-    const resp = await axios.get<TripDensityResponse[]>(tripsURL.toString());
-    return resp.data;
-  } catch (ex) {
-    console.log(`Error occurred. Error: ${ex}`);
+    const response = await apiClient.get<TripDensityResponse[]>(
+      `/trips/density?${params.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching trip density: ${error}`);
+    throw error;
   }
 };
-
-export default getTripDensity;

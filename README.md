@@ -1,40 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# TLC Shift
+
+A Next.js application for TLC (Taxi and Limousine Commission) shift management and marketplace. The platform features trip density visualization, shift listings management, and user authentication.
+
+## Features
+
+- **Trip Density Dashboard**: Interactive map showing NYC taxi trip patterns with time-based filtering
+- **Shift Marketplace**: Browse and manage shift listings
+- **User Management**: Authentication system with account management
+- **Listings Management**: Create, edit, and manage shift listings with photo uploads
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (Pages Router) with TypeScript
+- **UI Library**: Chakra UI v2.10
+- **Authentication**: NextAuth.js
+- **Maps**: Leaflet with React Leaflet
+- **Image Management**: Cloudinary
+- **HTTP Client**: Axios
+- **Styling**: Emotion, Tailwind CSS
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```
+src/
+├── api/                    # API service functions
+├── components/             # Reusable UI components
+│   ├── cloudinary/        # Image upload components
+│   ├── form/              # Form input components
+│   ├── geomap/           # Map visualization components
+│   ├── listing/          # Listing-related components
+│   ├── navbar/           # Navigation components
+│   └── paginator/        # Pagination component
+├── context/               # React context providers
+├── layout/                # Layout components
+├── lib/                   # Utilities and constants
+│   ├── constants/        # Static data (car brands, state codes)
+│   ├── interfaces/       # TypeScript interfaces
+│   └── utils/            # Helper functions
+├── pages/                 # Next.js pages (file-based routing)
+│   ├── api/auth/         # NextAuth.js API routes
+│   ├── listings/         # Listing pages (CRUD operations)
+│   └── ...               # Other application pages
+└── styles/               # Global styles and theme
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Key Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` - Trip density dashboard with interactive map
+- `/marketplace` - Shift marketplace
+- `/listings` - Browse all listings
+- `/listings/create` - Create new listing
+- `/my-listings` - User's personal listings
+- `/account` - User account management
 
-## Learn More
+## Development Guidelines
 
-To learn more about Next.js, take a look at the following resources:
+- Uses ES modules (import/export)
+- Follows SOLID principles with component separation
+- TypeScript for type safety
+- Chakra UI for consistent styling
+- Responsive design patterns
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
