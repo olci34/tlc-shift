@@ -1,5 +1,8 @@
 import { AuthOptions } from 'next-auth';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import axios from 'axios';
+import { getVisitorIdSafe } from './src/lib/utils/visitor-id';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export const authConfig = {
   callbacks: {
@@ -11,19 +14,62 @@ export const authConfig = {
 
       // Handle Google OAuth sign in
       if (account?.provider === 'google' && user) {
-        // Extract name from Google profile
-        const nameParts = user.name?.split(' ') || [];
-        const firstName = nameParts[0] || '';
-        const lastName = nameParts.slice(1).join(' ') || '';
+        try {
+          // Extract name from Google profile
+          const nameParts = user.name?.split(' ') || [];
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
 
-        return {
-          ...token,
-          id: user.id,
-          email: user.email,
-          firstName,
-          lastName,
-          provider: 'google'
-        };
+          // Get visitor ID
+          const visitorId = getVisitorIdSafe();
+
+          // Persist Google user to backend database and get access token
+          const response = await axios.post(
+            `${API_URL}/users/google-auth`,
+            {
+              email: user.email,
+              first_name: firstName,
+              last_name: lastName,
+              google_id: user.id,
+              visitor_id: visitorId
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          const { user: backendUser, access_token, token_type } = response.data;
+
+          // Return JWT with backend user data and access token
+          return {
+            ...token,
+            id: backendUser.id,
+            email: backendUser.email,
+            firstName: backendUser.first_name,
+            lastName: backendUser.last_name,
+            accessToken: access_token,
+            tokenType: token_type,
+            provider: 'google'
+          };
+        } catch (error) {
+          console.error('Failed to persist Google user to backend:', error);
+          // If backend call fails, still allow frontend auth but log the error
+          const nameParts = user.name?.split(' ') || [];
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+
+          return {
+            ...token,
+            id: user.id,
+            email: user.email,
+            firstName,
+            lastName,
+            provider: 'google',
+            error: 'backend_sync_failed'
+          };
+        }
       }
 
       // Handle credentials sign in
