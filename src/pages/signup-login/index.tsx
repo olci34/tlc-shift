@@ -286,165 +286,187 @@ const SignupLogin: React.FC = () => {
               <TabPanels>
                 <TabPanel px={0}>
                   <VStack spacing={4}>
-              <FormControl id="signup-email" isRequired isInvalid={!!signupErrors.email}>
-                <FormLabel>{t('auth.emailAddress')}</FormLabel>
-                <Input
-                  type="email"
-                  name="email"
-                  value={signupData.email}
-                  onChange={handleSignupChange}
-                />
-                {signupErrors.email && <FormErrorMessage>{signupErrors.email}</FormErrorMessage>}
-              </FormControl>
-              <FormControl id="signup-firstName" isRequired isInvalid={!!signupErrors.firstName}>
-                <FormLabel>{t('auth.firstName')}</FormLabel>
-                <Input
-                  type="text"
-                  name="firstName"
-                  value={signupData.firstName}
-                  onChange={handleSignupChange}
-                />
-                {signupErrors.firstName && (
-                  <FormErrorMessage>{signupErrors.firstName}</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl id="signup-lastName" isRequired isInvalid={!!signupErrors.lastName}>
-                <FormLabel>{t('auth.lastName')}</FormLabel>
-                <Input
-                  type="text"
-                  name="lastName"
-                  value={signupData.lastName}
-                  onChange={handleSignupChange}
-                />
-                {signupErrors.lastName && (
-                  <FormErrorMessage>{signupErrors.lastName}</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl id="signup-password" isRequired isInvalid={!!signupErrors.password}>
-                <FormLabel>{t('auth.password')}</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={signupData.password}
-                    onChange={handleSignupChange}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <IconButton
-                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                      onClick={togglePasswordVisibility}
-                      variant="ghost"
-                    />
-                  </InputRightElement>
-                </InputGroup>
-                <FormHelperText>{t('auth.passwordLength')}</FormHelperText>
-                {signupErrors.password && (
-                  <FormErrorMessage>{signupErrors.password}</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                id="signup-confirmPassword"
-                isRequired
-                isInvalid={!!signupErrors.confirmPassword}
-              >
-                <FormLabel>{t('auth.confirmPassword')}</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    name="confirmPassword"
-                    value={signupData.confirmPassword}
-                    onChange={handleSignupChange}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <IconButton
-                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                      onClick={togglePasswordVisibility}
-                      variant="ghost"
-                    />
-                  </InputRightElement>
-                </InputGroup>
-                {signupErrors.confirmPassword && (
-                  <FormErrorMessage>{signupErrors.confirmPassword}</FormErrorMessage>
-                )}
-              </FormControl>
-              <Button
-                colorScheme="green"
-                width="full"
-                size="lg"
-                onClick={handleSignupSubmit}
-                disabled={!isFormValid(signupData, signupErrors)}
-                _hover={{
-                  transform: 'translateY(-2px)',
-                  shadow: 'lg'
-                }}
-                transition="all 0.2s"
-              >
-                {t('auth.signUp')}
-              </Button>
-            </VStack>
-          </TabPanel>
-          <TabPanel px={0}>
-            <VStack spacing={4}>
-              <FormControl id="login-email" isRequired isInvalid={!!loginErrors.email}>
-                <FormLabel>{t('auth.emailAddress')}</FormLabel>
-                <Input
-                  type="email"
-                  name="email"
-                  value={loginData.email}
-                  onChange={handleLoginChange}
-                />
-                {!!loginErrors.email && <FormErrorMessage>{loginErrors.email}</FormErrorMessage>}
-              </FormControl>
-              <FormControl
-                id="login-password"
-                isRequired
-                isInvalid={!loginData.password && !!loginErrors.password}
-              >
-                <FormLabel>{t('auth.password')}</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={loginData.password}
-                    onChange={handleLoginChange}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <IconButton
-                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                      onClick={togglePasswordVisibility}
-                      variant="ghost"
-                    />
-                  </InputRightElement>
-                </InputGroup>
-                {loginErrors.password && (
-                  <FormErrorMessage>{loginErrors.password}</FormErrorMessage>
-                )}
-              </FormControl>
-              <Button
-                colorScheme="green"
-                width="full"
-                size="lg"
-                onClick={handleLoginSubmit}
-                _hover={{
-                  transform: 'translateY(-2px)',
-                  shadow: 'lg'
-                }}
-                transition="all 0.2s"
-              >
-                {t('auth.login')}
-              </Button>
-              {loginErrors.errorMessage && (
-                <Text color="red.500" fontSize="sm" fontWeight="medium">
-                  {loginErrors.errorMessage}
-                </Text>
-              )}
-            </VStack>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+                    <FormControl id="signup-email" isRequired isInvalid={!!signupErrors.email}>
+                      <FormLabel>{t('auth.emailAddress')}</FormLabel>
+                      <Input
+                        type="email"
+                        name="email"
+                        value={signupData.email}
+                        onChange={handleSignupChange}
+                      />
+                      {signupErrors.email && (
+                        <FormErrorMessage>{signupErrors.email}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <FormControl
+                      id="signup-firstName"
+                      isRequired
+                      isInvalid={!!signupErrors.firstName}
+                    >
+                      <FormLabel>{t('auth.firstName')}</FormLabel>
+                      <Input
+                        type="text"
+                        name="firstName"
+                        value={signupData.firstName}
+                        onChange={handleSignupChange}
+                      />
+                      {signupErrors.firstName && (
+                        <FormErrorMessage>{signupErrors.firstName}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <FormControl
+                      id="signup-lastName"
+                      isRequired
+                      isInvalid={!!signupErrors.lastName}
+                    >
+                      <FormLabel>{t('auth.lastName')}</FormLabel>
+                      <Input
+                        type="text"
+                        name="lastName"
+                        value={signupData.lastName}
+                        onChange={handleSignupChange}
+                      />
+                      {signupErrors.lastName && (
+                        <FormErrorMessage>{signupErrors.lastName}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <FormControl
+                      id="signup-password"
+                      isRequired
+                      isInvalid={!!signupErrors.password}
+                    >
+                      <FormLabel>{t('auth.password')}</FormLabel>
+                      <InputGroup>
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          name="password"
+                          value={signupData.password}
+                          onChange={handleSignupChange}
+                        />
+                        <InputRightElement width="4.5rem">
+                          <IconButton
+                            aria-label={
+                              showPassword ? t('auth.hidePassword') : t('auth.showPassword')
+                            }
+                            icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                            onClick={togglePasswordVisibility}
+                            variant="ghost"
+                          />
+                        </InputRightElement>
+                      </InputGroup>
+                      <FormHelperText>{t('auth.passwordLength')}</FormHelperText>
+                      {signupErrors.password && (
+                        <FormErrorMessage>{signupErrors.password}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <FormControl
+                      id="signup-confirmPassword"
+                      isRequired
+                      isInvalid={!!signupErrors.confirmPassword}
+                    >
+                      <FormLabel>{t('auth.confirmPassword')}</FormLabel>
+                      <InputGroup>
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          name="confirmPassword"
+                          value={signupData.confirmPassword}
+                          onChange={handleSignupChange}
+                        />
+                        <InputRightElement width="4.5rem">
+                          <IconButton
+                            aria-label={
+                              showPassword ? t('auth.hidePassword') : t('auth.showPassword')
+                            }
+                            icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                            onClick={togglePasswordVisibility}
+                            variant="ghost"
+                          />
+                        </InputRightElement>
+                      </InputGroup>
+                      {signupErrors.confirmPassword && (
+                        <FormErrorMessage>{signupErrors.confirmPassword}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <Button
+                      colorScheme="green"
+                      width="full"
+                      size="lg"
+                      onClick={handleSignupSubmit}
+                      disabled={!isFormValid(signupData, signupErrors)}
+                      _hover={{
+                        transform: 'translateY(-2px)',
+                        shadow: 'lg'
+                      }}
+                      transition="all 0.2s"
+                    >
+                      {t('auth.signUp')}
+                    </Button>
+                  </VStack>
+                </TabPanel>
+                <TabPanel px={0}>
+                  <VStack spacing={4}>
+                    <FormControl id="login-email" isRequired isInvalid={!!loginErrors.email}>
+                      <FormLabel>{t('auth.emailAddress')}</FormLabel>
+                      <Input
+                        type="email"
+                        name="email"
+                        value={loginData.email}
+                        onChange={handleLoginChange}
+                      />
+                      {!!loginErrors.email && (
+                        <FormErrorMessage>{loginErrors.email}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <FormControl
+                      id="login-password"
+                      isRequired
+                      isInvalid={!loginData.password && !!loginErrors.password}
+                    >
+                      <FormLabel>{t('auth.password')}</FormLabel>
+                      <InputGroup>
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          name="password"
+                          value={loginData.password}
+                          onChange={handleLoginChange}
+                        />
+                        <InputRightElement width="4.5rem">
+                          <IconButton
+                            aria-label={
+                              showPassword ? t('auth.hidePassword') : t('auth.showPassword')
+                            }
+                            icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                            onClick={togglePasswordVisibility}
+                            variant="ghost"
+                          />
+                        </InputRightElement>
+                      </InputGroup>
+                      {loginErrors.password && (
+                        <FormErrorMessage>{loginErrors.password}</FormErrorMessage>
+                      )}
+                    </FormControl>
+                    <Button
+                      colorScheme="green"
+                      width="full"
+                      size="lg"
+                      onClick={handleLoginSubmit}
+                      _hover={{
+                        transform: 'translateY(-2px)',
+                        shadow: 'lg'
+                      }}
+                      transition="all 0.2s"
+                    >
+                      {t('auth.login')}
+                    </Button>
+                    {loginErrors.errorMessage && (
+                      <Text color="red.500" fontSize="sm" fontWeight="medium">
+                        {loginErrors.errorMessage}
+                      </Text>
+                    )}
+                  </VStack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </CardBody>
         </Card>
       </Container>

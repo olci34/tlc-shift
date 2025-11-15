@@ -9,11 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Type definition for gtag function
 declare global {
   interface Window {
-    gtag?: (
-      command: string,
-      targetId: string,
-      config?: Record<string, any>
-    ) => void;
+    gtag?: (command: string, targetId: string, config?: Record<string, any>) => void;
   }
 }
 

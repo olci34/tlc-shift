@@ -31,31 +31,58 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     };
   }, [router.events]);
 
-  // Load messages synchronously on the server, async on the client
-  const [messages, setMessages] = React.useState(() => {
-    if (pageProps.messages) {
-      return pageProps.messages;
-    }
-    // For client-side navigation, load messages
-    if (typeof window !== 'undefined') {
-      return {};
-    }
-    // For SSR, try to load messages synchronously
-    try {
-      return require(`../../messages/${router.locale || 'en'}.json`);
-    } catch {
-      return {};
-    }
-  });
+  // Initialize messages from pageProps or empty object
+  const [messages, setMessages] = React.useState(pageProps.messages || {});
 
+  // Load messages dynamically when locale changes or messages are not provided
   React.useEffect(() => {
-    // Load messages dynamically on client if not already loaded
-    if (!pageProps.messages && Object.keys(messages).length === 0) {
-      import(`../../messages/${router.locale || 'en'}.json`)
-        .then((module) => setMessages(module.default))
-        .catch(() => setMessages({}));
+    // If messages are provided in pageProps, use them
+    if (pageProps.messages) {
+      setMessages(pageProps.messages);
+      return;
     }
-  }, [router.locale, pageProps.messages, messages]);
+
+    // Otherwise, load messages dynamically for the current locale
+    const locale = router.locale || 'en';
+    let cancelled = false;
+
+    const loadMessages = async () => {
+      try {
+        const loadedMessages = await import(`../../messages/${locale}.json`);
+
+        // Only update state if the effect hasn't been cancelled
+        if (!cancelled) {
+          setMessages(loadedMessages.default || loadedMessages);
+        }
+      } catch (error) {
+        console.error(`Failed to load messages for locale: ${locale}`, error);
+
+        // Fallback to English if the locale messages fail to load
+        if (locale !== 'en' && !cancelled) {
+          try {
+            const fallbackMessages = await import(`../../messages/en.json`);
+            if (!cancelled) {
+              setMessages(fallbackMessages.default || fallbackMessages);
+            }
+          } catch (fallbackError) {
+            console.error('Failed to load fallback messages', fallbackError);
+            if (!cancelled) {
+              setMessages({});
+            }
+          }
+        } else if (!cancelled) {
+          setMessages({});
+        }
+      }
+    };
+
+    loadMessages();
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      cancelled = true;
+    };
+  }, [router.locale, pageProps.messages]);
 
   return (
     <>

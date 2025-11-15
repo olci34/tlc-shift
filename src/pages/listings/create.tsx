@@ -12,12 +12,9 @@ const CreateListingPage = () => {
   const handleSubmit = async (listing: Listing) => {
     try {
       const result = await createListing(listing);
-      if (result) {
+      if (result && listing.listing_category) {
         // Track listing creation in Google Analytics
-        gtag.trackEvent.createListing(
-          listing.listing_category,
-          listing.price
-        );
+        gtag.trackEvent.createListing(listing.listing_category, listing.price);
 
         // Cleanup object URLs for new images
         listing.images.forEach((img) => {
