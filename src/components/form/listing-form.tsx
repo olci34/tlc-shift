@@ -26,9 +26,16 @@ import { useTranslations } from 'next-intl';
 export interface ListingFormProps {
   listing?: Listing;
   onSubmit: (listing: Listing) => Promise<void> | void;
+  submitButtonText?: string;
+  isSubmitting?: boolean;
 }
 
-const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
+const ListingForm: React.FC<ListingFormProps> = ({
+  listing,
+  onSubmit,
+  submitButtonText,
+  isSubmitting = false
+}) => {
   const router = useRouter();
   const t = useTranslations('listingForm');
   const initialListingState: Listing = {
@@ -520,10 +527,15 @@ const ListingForm: React.FC<ListingFormProps> = ({ listing, onSubmit }) => {
         </FormControl>
       </VStack>
       <Stack direction={{ base: 'column', md: 'row' }} mt={4}>
-        <Button onClick={submitListing}>
-          {listingData._id ? t('saveListing') : t('createListing')}
+        <Button onClick={submitListing} isLoading={isSubmitting} isDisabled={isSubmitting}>
+          {submitButtonText || (listingData._id ? t('saveListing') : t('createListing'))}
         </Button>
-        <Button onClick={cancelListing} isLoading={isCanceling} loadingText={t('cleaningUp')}>
+        <Button
+          onClick={cancelListing}
+          isLoading={isCanceling}
+          loadingText={t('cleaningUp')}
+          isDisabled={isSubmitting}
+        >
           {t('cancel')}
         </Button>
       </Stack>
