@@ -136,5 +136,40 @@ export const trackEvent = {
       category: 'navigation',
       label: language
     });
+  },
+
+  // Payment events
+  paymentInitiated: (paymentType: string, amount?: number) => {
+    event({
+      action: 'payment_initiated',
+      category: 'payments',
+      label: paymentType,
+      value: amount
+    });
+  },
+
+  paymentSuccess: (paymentType: string, amount?: number, paymentId?: string) => {
+    event({
+      action: 'payment_success',
+      category: 'payments',
+      label: `${paymentType}_${paymentId || 'unknown'}`,
+      value: amount
+    });
+  },
+
+  paymentFailed: (paymentType: string, errorMessage?: string) => {
+    event({
+      action: 'payment_failed',
+      category: 'payments',
+      label: errorMessage || 'unknown_error'
+    });
+  },
+
+  paymentCancelled: (paymentType: string) => {
+    event({
+      action: 'payment_cancelled',
+      category: 'payments',
+      label: paymentType
+    });
   }
 };

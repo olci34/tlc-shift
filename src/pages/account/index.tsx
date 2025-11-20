@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Heading,
@@ -15,23 +16,52 @@ import {
   Avatar,
   Stack,
   useColorModeValue,
-  Button
+  Button,
+  Spinner,
+  Center
 } from '@chakra-ui/react';
 import { MdEmail, MdPerson, MdLock } from 'react-icons/md';
 import { FaMoneyBillWave } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
 import { GetStaticProps } from 'next';
 import { getMessages } from '@/lib/utils/i18n';
+import { getSubscriptionInfo, SubscriptionInfoResponse } from '@/api/payments';
 
 const Account = () => {
   const t = useTranslations('account');
   const session = useSession();
   const user = session.data?.user;
 
+  const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfoResponse | null>(null);
+  const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const labelColor = useColorModeValue('gray.600', 'gray.400');
   const linkColor = useColorModeValue('green.600', 'green.300');
+
+  useEffect(() => {
+    const loadSubscriptionInfo = async () => {
+      if (!session.data?.user) {
+        return;
+      }
+
+      try {
+        setIsLoadingSubscription(true);
+        const data = await getSubscriptionInfo();
+        setSubscriptionInfo(data);
+        setSubscriptionError(null);
+      } catch (error) {
+        console.error('Failed to load subscription info:', error);
+        setSubscriptionError('Failed to load subscription information');
+      } finally {
+        setIsLoadingSubscription(false);
+      }
+    };
+
+    loadSubscriptionInfo();
+  }, [session.data?.user]);
 
   const handleChangePassword = () => {
     console.log('Change password clicked');
@@ -130,58 +160,95 @@ const Account = () => {
           </CardHeader>
           <Divider />
           <CardBody>
-            <VStack spacing={4} align="stretch">
-              <HStack justify="space-between">
-                <VStack align="start" spacing={1}>
-                  <Text fontWeight="semibold" fontSize="lg">
-                    {t('currentPlan')}
-                  </Text>
+            {isLoadingSubscription ? (
+              <Center py={8}>
+                <VStack spacing={3}>
+                  <Spinner size="lg" color="green.500" thickness="3px" />
                   <Text fontSize="sm" color={labelColor}>
-                    {t('planDescription')}
+                    Loading subscription info...
                   </Text>
                 </VStack>
-                <Badge colorScheme="green" fontSize="md" px={3} py={1} borderRadius="md">
-                  {t('freePlan')}
-                </Badge>
-              </HStack>
-
-              <Divider />
-
-              <Stack
-                direction={{ base: 'column', md: 'row' }}
-                justify="space-between"
-                align="start"
-              >
-                <Box>
-                  <Text fontSize="sm" color={labelColor} mb={1}>
-                    {t('monthlyCharge')}
-                  </Text>
-                  <Text fontSize="2xl" fontWeight="bold" color="green.500">
-                    $0.00
-                  </Text>
-                </Box>
-                <Box>
-                  <Text fontSize="sm" color={labelColor} mb={1}>
-                    {t('activeListings')}
-                  </Text>
-                  <Text fontSize="2xl" fontWeight="bold">
-                    0
-                  </Text>
-                </Box>
-              </Stack>
-
-              <Box
-                p={4}
-                bg={useColorModeValue('green.50', 'green.900')}
-                borderRadius="md"
-                borderWidth="1px"
-                borderColor={useColorModeValue('green.200', 'green.700')}
-              >
-                <Text fontSize="sm" color={useColorModeValue('green.800', 'green.200')}>
-                  {t('freeFeatureNote')}
+              </Center>
+            ) : subscriptionError ? (
+              <Center py={8}>
+                <Text fontSize="sm" color="red.500">
+                  {subscriptionError}
                 </Text>
-              </Box>
-            </VStack>
+              </Center>
+            ) : (
+              <VStack spacing={4} align="stretch">
+                <HStack justify="space-between">
+                  <VStack align="start" spacing={1}>
+                    <Text fontWeight="semibold" fontSize="lg">
+                      {t('currentPlan')}
+                    </Text>
+                    <Text fontSize="sm" color={labelColor}>
+                      {subscriptionInfo && subscriptionInfo.paid_listings_count > 0
+                        ? `Paying for ${subscriptionInfo.paid_listings_count} listing${subscriptionInfo.paid_listings_count > 1 ? 's' : ''}`
+                        : t('planDescription')}
+                    </Text>
+                  </VStack>
+                  <Badge
+                    colorScheme={
+                      subscriptionInfo && subscriptionInfo.monthly_charge > 0 ? 'blue' : 'green'
+                    }
+                    fontSize="md"
+                    px={3}
+                    py={1}
+                    borderRadius="md"
+                  >
+                    {subscriptionInfo && subscriptionInfo.monthly_charge > 0 ? 'PAID' : t('freePlan')}
+                  </Badge>
+                </HStack>
+
+                <Divider />
+
+                <Stack
+                  direction={{ base: 'column', md: 'row' }}
+                  justify="space-between"
+                  align="start"
+                >
+                  <Box>
+                    <Text fontSize="sm" color={labelColor} mb={1}>
+                      {t('monthlyCharge')}
+                    </Text>
+                    <Text
+                      fontSize="2xl"
+                      fontWeight="bold"
+                      color={
+                        subscriptionInfo && subscriptionInfo.monthly_charge > 0
+                          ? 'blue.500'
+                          : 'green.500'
+                      }
+                    >
+                      ${subscriptionInfo?.monthly_charge.toFixed(2) ?? '0.00'}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="sm" color={labelColor} mb={1}>
+                      {t('activeListings')}
+                    </Text>
+                    <Text fontSize="2xl" fontWeight="bold">
+                      {subscriptionInfo?.active_listings_count ?? 0}
+                    </Text>
+                  </Box>
+                </Stack>
+
+                <Box
+                  p={4}
+                  bg={useColorModeValue('green.50', 'green.900')}
+                  borderRadius="md"
+                  borderWidth="1px"
+                  borderColor={useColorModeValue('green.200', 'green.700')}
+                >
+                  <Text fontSize="sm" color={useColorModeValue('green.800', 'green.200')}>
+                    {subscriptionInfo && subscriptionInfo.monthly_charge === 0
+                      ? t('freeFeatureNote')
+                      : `You are being charged $${subscriptionInfo?.price_per_listing.toFixed(2)}/month per listing after your first ${subscriptionInfo?.free_listings_limit} free listings.`}
+                  </Text>
+                </Box>
+              </VStack>
+            )}
           </CardBody>
         </Card>
       </VStack>
