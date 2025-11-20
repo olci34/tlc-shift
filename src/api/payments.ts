@@ -89,10 +89,7 @@ export const getStripeConfig = async (): Promise<StripeConfigResponse> => {
 /**
  * Get user's payment history.
  */
-export const getPaymentHistory = async (
-  page: number = 1,
-  perPage: number = 20
-): Promise<any> => {
+export const getPaymentHistory = async (page: number = 1, perPage: number = 20): Promise<any> => {
   try {
     const resp = await apiClient.get('/payments/history', {
       params: { page, per_page: perPage }
