@@ -40,6 +40,9 @@ const Account = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const labelColor = useColorModeValue('gray.600', 'gray.400');
   const linkColor = useColorModeValue('green.600', 'green.300');
+  const noteBg = useColorModeValue('green.50', 'green.900');
+  const noteBorderColor = useColorModeValue('green.200', 'green.700');
+  const noteTextColor = useColorModeValue('green.800', 'green.200');
 
   useEffect(() => {
     const loadSubscriptionInfo = async () => {
@@ -197,7 +200,9 @@ const Account = () => {
                     py={1}
                     borderRadius="md"
                   >
-                    {subscriptionInfo && subscriptionInfo.monthly_charge > 0 ? 'PAID' : t('freePlan')}
+                    {subscriptionInfo && subscriptionInfo.monthly_charge > 0
+                      ? 'PAID'
+                      : t('freePlan')}
                   </Badge>
                 </HStack>
 
@@ -236,12 +241,12 @@ const Account = () => {
 
                 <Box
                   p={4}
-                  bg={useColorModeValue('green.50', 'green.900')}
+                  bg={noteBg}
                   borderRadius="md"
                   borderWidth="1px"
-                  borderColor={useColorModeValue('green.200', 'green.700')}
+                  borderColor={noteBorderColor}
                 >
-                  <Text fontSize="sm" color={useColorModeValue('green.800', 'green.200')}>
+                  <Text fontSize="sm" color={noteTextColor}>
                     {subscriptionInfo && subscriptionInfo.monthly_charge === 0
                       ? t('freeFeatureNote')
                       : `You are being charged $${subscriptionInfo?.price_per_listing.toFixed(2)}/month per listing after your first ${subscriptionInfo?.free_listings_limit} free listings.`}
