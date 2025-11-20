@@ -48,7 +48,7 @@ const PaymentFailedPage = () => {
     try {
       setIsLoading(true);
       const data = await getListing(listingId);
-      setListing(data);
+      setListing(data || null);
     } catch (err) {
       console.error('Failed to load listing:', err);
       setError('Failed to load listing details');
