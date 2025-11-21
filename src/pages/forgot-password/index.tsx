@@ -13,7 +13,7 @@ import {
   Card,
   CardBody
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { requestPasswordReset } from '@/api/passwordReset';
 import { CheckCircleIcon } from '@chakra-ui/icons';
@@ -83,13 +83,8 @@ const ForgotPasswordPage = () => {
               Back to Login
             </Button>
             <Text fontSize="sm" color="gray.600">
-              Didn't receive an email?{' '}
-              <Button
-                variant="link"
-                colorScheme="blue"
-                size="sm"
-                onClick={() => setSuccess(false)}
-              >
+              Didn&apos;t receive an email?{' '}
+              <Button variant="link" colorScheme="blue" size="sm" onClick={() => setSuccess(false)}>
                 Try again
               </Button>
             </Text>
@@ -107,7 +102,8 @@ const ForgotPasswordPage = () => {
             <Box textAlign="center">
               <Heading size="lg">Forgot Password?</Heading>
               <Text color="gray.600" mt={2}>
-                Enter your email address and we'll send you instructions to reset your password.
+                Enter your email address and we&apos;ll send you instructions to reset your
+                password.
               </Text>
             </Box>
 

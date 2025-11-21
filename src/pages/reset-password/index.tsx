@@ -22,7 +22,7 @@ import {
   ListItem,
   ListIcon
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ViewIcon, ViewOffIcon, CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 import { resetPassword } from '@/api/passwordReset';
@@ -292,7 +292,11 @@ const ResetPasswordPage = () => {
 
                 <Text fontSize="sm" textAlign="center" color="gray.600">
                   Remember your password?{' '}
-                  <Button variant="link" colorScheme="blue" onClick={() => router.push('/signup-login')}>
+                  <Button
+                    variant="link"
+                    colorScheme="blue"
+                    onClick={() => router.push('/signup-login')}
+                  >
                     Back to Login
                   </Button>
                 </Text>
