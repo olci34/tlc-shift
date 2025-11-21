@@ -445,6 +445,16 @@ const SignupLogin: React.FC = () => {
                         <FormErrorMessage>{loginErrors.password}</FormErrorMessage>
                       )}
                     </FormControl>
+                    <Box textAlign="right" w="full">
+                      <Button
+                        variant="link"
+                        colorScheme="green"
+                        size="sm"
+                        onClick={() => router.push('/forgot-password')}
+                      >
+                        Forgot Password?
+                      </Button>
+                    </Box>
                     <Button
                       colorScheme="green"
                       width="full"
