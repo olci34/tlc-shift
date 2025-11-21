@@ -40,6 +40,8 @@
     "joiningWaitlist": "Joining...",
     "waitlistSuccess": "Successfully joined the waitlist!",
     "waitlistSuccessDescription": "Thank you for joining! We'll notify you when exclusive discounts become available.",
+    "waitlistAlreadyJoined": "Already on the waitlist",
+    "waitlistAlreadyJoinedDescription": "This email has already joined the waitlist. We'll notify you when exclusive discounts become available.",
     "waitlistError": "Unable to join waitlist",
     "waitlistErrorDescription": "Something went wrong. Please try again later.",
     "waitlistEmailPlaceholder": "Enter your email address",

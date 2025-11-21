@@ -101,14 +101,27 @@ export default function Home() {
         newsletterEmail.current.value = '';
       }
     } catch (error: any) {
-      toast({
-        title: t('home.waitlistError'),
-        description: error?.response?.data?.detail || t('home.waitlistErrorDescription'),
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top'
-      });
+      // Handle duplicate entry (409 Conflict) as a warning
+      if (error?.response?.status === 409) {
+        toast({
+          title: t('home.waitlistAlreadyJoined'),
+          description: t('home.waitlistAlreadyJoinedDescription'),
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+          position: 'top'
+        });
+      } else {
+        // Handle other errors
+        toast({
+          title: t('home.waitlistError'),
+          description: error?.response?.data?.detail || t('home.waitlistErrorDescription'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top'
+        });
+      }
     } finally {
       setJoiningWaitlist(false);
     }
